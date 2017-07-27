@@ -1,33 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Parallax Template - Materialize</title>
-
-  <!-- CSS  -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/materialize.css') }}" type="text/css " rel="stylesheet " media="screen,projection "
-  />
-  <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css " rel="stylesheet " media="screen,projection "
-  />
-  <link href="{{ url_for('static', filename='fullcalendar/fullcalendar.css')}} " rel='stylesheet' />
-</head>
-
-<body>
-  <p id="console"></p>
-  <div id="calendar"></div>
-
-  <!--Scripts-->
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js "></script>
-  <script src="{{ url_for('static', filename='js/materialize.js') }} "></script>
-  <script src="{{ url_for('static', filename='js/init.js') }} "></script>
-  <script src="{{ url_for('static', filename='fullcalendar/lib/jquery.min.js') }} "></script>
-  <script src="{{ url_for('static', filename='fullcalendar/lib/moment.min.js') }} "></script>
-  <script src="{{ url_for('static', filename='fullcalendar/fullcalendar.js') }} "></script>
-  <script src="{{ url_for('static', filename='js/main.js') }} "></script>
-
-</body>
-
-</html>
+{% extends "template.html" %}
+{% block body %}
+ <div class="card-panel teal lighten-2">Hello This is a Card Panel</div>
+{% endblock %}
