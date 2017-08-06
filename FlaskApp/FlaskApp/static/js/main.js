@@ -10,7 +10,7 @@ $(function () {
             first_name: $('input[name="first_name"]').val(),
             last_name: $('input[name="last_name"]').val()
         }, function (data) {
-            $("#result").text(data.first_name);
+            $("#result").text(data.first_name+ " " +data.last_name);
         });
         return false;
     });

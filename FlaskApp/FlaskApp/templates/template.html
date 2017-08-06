@@ -16,8 +16,7 @@
 </head>
 
 <body>
-  {% block body %}
-  {% endblock %}
+  {% block body %} {% endblock %}
   <!--Scripts-->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js "></script>
   <script src="{{ url_for('static', filename='js/materialize.js') }} "></script>
@@ -26,7 +25,6 @@
   <script src="{{ url_for('static', filename='fullcalendar/lib/moment.min.js') }} "></script>
   <script src="{{ url_for('static', filename='fullcalendar/fullcalendar.js') }} "></script>
   <script src="{{ url_for('static', filename='js/main.js') }} "></script>
-
 </body>
 
 </html>
