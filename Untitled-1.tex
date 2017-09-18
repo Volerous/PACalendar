@@ -1,0 +1,228 @@
+\documentclass[12pt,a4paper]{report}
+    % \usepackage{amsmath}
+    % \usepackage{graphicx,psfrag}
+    % \usepackage{enumerate}
+    % \usepackage{enumitem}
+    % \usepackage{framed}
+    % \usepackage{natbib}
+    % \usepackage{tikz}
+    % \usepackage{pgfplots}
+    % \usepackage[utf8]{inputenc}
+    % \usepackage[danish]{babel}
+    % \usepackage{todonotes} % With this, you can add todo-notes: \todo{stuff todo} or \todo[inline]{stuff todo}
+    % \usepackage{caption} % You can create captions for your tables, pictures etc. AND YOU WANT TO DO THAT
+    % \usepackage{wrapfig} % Allows in-line images if needed
+    % \usepackage{hyperref} % Allows you to create hyperlinks within the document
+    % \hypersetup{colorlinks=false,hidelinks, citecolor=black, urlcolor=black}
+    % \usepackage{color}
+    % \usepackage{url} % Enables typesetting of hyperlinks
+    % \usepackage{amsmath} % Math in your tex
+    % \usepackage{amsfonts} % Math in your tex
+    % \usepackage{amssymb} % Math symbols
+    % \usepackage{mathtools} % Math in your tex
+    % \usepackage{amsthm}
+    % \usepackage{ulem}
+    % \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+    % \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+    % \usepackage{csquotes} % Provides advanced facilities for inline and display quotations
+    % \usepackage[titletoc]{appendix} % Names appendices "Appendix A" instead of just A in Contents
+    % \usepackage{pdfpages} % We cF2an now import pdf files to our tex file - Som win!
+    % \usepackage{graphicx} % We can now import pictures - Som uhlalalah!
+    % \usepackage{algorithm} % http://ctan.org/pkg/algorithms
+    % \usepackage{algpseudocode} % http://ctan.org/pkg/algorithmicx
+    % \algnewcommand\algorithmicforeach{\textbf{for each}}
+    % \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+    % \usepackage{natbib} % Bibliography stuff
+    % \usepackage{fancyhdr}
+    % \usepackage{lastpage} % Making it possible to write ``Page x of y'' in the footer
+    % \usepackage{setspace}
+    % \usepackage{listings}
+    % \usepackage{algorithm}
+    % \usepackage{algpseudocode}
+    % \usepackage{amsmath}
+    % \usepackage{lineno, blindtext}
+    % \newcommand{\blind}{0}
+    % \usepackage{mathptmx}
+    % \usepackage{nicefrac}
+    
+    % \usepackage{listings}% http://ctan.org/pkg/listings
+    % \usepackage{xcolor}% http://ctan.org/pkg/xcolor
+    % \definecolor{bluekeywords}{rgb}{0.13,0.13,1}
+    % \definecolor{greencomments}{rgb}{0,0.5,0}
+    % \definecolor{turqusnumbers}{rgb}{0.17,0.57,0.69}
+    % \definecolor{redstrings}{rgb}{0.5,0,0}
+    
+    % \lstdefinelanguage{FSharp}
+    %     {morekeywords={let, new, match, with, rec, open, module, namespace, type, of, member, and, for, in, do, begin, end, fun, function, try, mutable, if, then, else},
+    %     keywordstyle=\color{bluekeywords},
+    %     sensitive=false,
+    %     morecomment=[l][\color{greencomments}]{///},
+    %     morecomment=[l][\color{greencomments}]{//},
+    %     morecomment=[s][\color{greencomments}]{{(*}{*)}},
+    %     morestring=[b]",
+    %     stringstyle=\color{redstrings}
+    %     }
+    
+    % \lstnewenvironment{fslisting}
+    %   {
+    %     \lstset{
+    %         language=FSharp,
+    %         basicstyle=\ttfamily,
+    %         breaklines=true,
+    %         columns=fullflexible}
+    %   }
+    %   {
+    %   }
+    % \addtolength{\oddsidemargin}{-.45in}%
+    % \addtolength{\evensidemargin}{-.45in}%
+    % \addtolength{\textwidth}{1.3in}%
+    % \addtolength{\textheight}{1.3in}%
+    % \addtolength{\topmargin}{-.8in}%
+    % %%%%%%%%%%%%%%%%%%%%%%% Copy from exercise .tex
+    
+    % \theoremstyle{plain}
+    % \newtheorem{thm}{Sætning}
+    % \newtheorem{prop}[thm]{Proposition}
+    % \newtheorem{lem}[thm]{Lemma}
+    % \newtheorem{cor}[thm]{Korollar}
+    % \newtheorem{conj}[thm]{Formodning}
+    % \theoremstyle{definition}
+    % \newtheorem{exercise}{Opgave}
+    % \newtheorem{definition}[thm]{Definition}
+    % \newtheorem{prob}[thm]{Problem}
+    % \newtheorem{remark}[thm]{Bemærkning}
+    % \newtheorem{example}[thm]{Eksempel}
+    % \graphicspath{ {img/} }
+    % \newcommand{\NN}{\mathbb{N}}
+    % \newcommand{\ZZ}{\mathbb{Z}}
+    % \newcommand{\QQ}{\mathbb{Q}}
+    % \newcommand{\RR}{\mathbb{R}}
+    % \newcommand{\CC}{\mathbb{C}}
+    % \newcommand{\GCD}{\operatorname{GCD}}
+    % \setlength\parindent{0pt}
+    
+    % \newcommand\arrows[3]{  %%% matrix row arrow command
+    %         \begin{matrix}
+    %         \ifx\relax#1\relax\else \xrightarrow{#1}\fi\\
+    %         \ifx\relax#2\relax\else \xrightarrow{#2}\fi\\
+    %         \ifx\relax#3\relax\else \xrightarrow{#3}\fi
+    %         \end{matrix}
+    % }
+    % \newcommand\arrowsb[5]{  %%% matrix row arrow command
+    %         \begin{matrix}
+    %         \ifx\relax#1\relax\else \xrightarrow{#1}\fi\\
+    %         \ifx\relax#2\relax\else \xrightarrow{#2}\fi\\
+    %         \ifx\relax#3\relax\else \xrightarrow{#3}\fi\\
+    %         \ifx\relax#4\relax\else \xrightarrow{#4}\fi\\
+    %         \ifx\relax#5\relax\else \xrightarrow{#5}\fi
+    %         \end{matrix}
+    % }
+    % \newcommand\arrowsm[4]{  %%% matrix row arrow command
+    %         \begin{matrix}
+    %         \ifx\relax#1\relax\else \xrightarrow{#1}\fi\\
+    %         \ifx\relax#2\relax\else \xrightarrow{#2}\fi\\
+    %         \ifx\relax#3\relax\else \xrightarrow{#3}\fi\\
+    %         \ifx\relax#4\relax\else \xrightarrow{#4}\fi\\
+    %         \end{matrix}
+    % }
+    
+    
+    % \DeclareSymbolFont{usualmathcal}{OMS}{cmsy}{m}{n}
+    % \DeclareSymbolFontAlphabet{\mathcal}{usualmathcal}
+    
+    
+    % \DeclareSymbolFont{letters}{OML}{txmi}{m}{it}
+    
+    % \DeclareMathSymbol{\alpha}{\mathord}{letters}{"0B}
+    % \DeclareMathSymbol{\beta}{\mathord}{letters}{"0C}
+    % \DeclareMathSymbol{\gamma}{\mathord}{letters}{"0D}
+    % \DeclareMathSymbol{\delta}{\mathord}{letters}{"0E}
+    % \DeclareMathSymbol{\epsilon}{\mathord}{letters}{"0F}
+    % \DeclareMathSymbol{\zeta}{\mathord}{letters}{"10}
+    % \DeclareMathSymbol{\eta}{\mathord}{letters}{"11}
+    % \DeclareMathSymbol{\theta}{\mathord}{letters}{"12}
+    % \DeclareMathSymbol{\iota}{\mathord}{letters}{"13}
+    % \DeclareMathSymbol{\kappa}{\mathord}{letters}{"14}
+    % \DeclareMathSymbol{\lambda}{\mathord}{letters}{"15}
+    % \DeclareMathSymbol{\mu}{\mathord}{letters}{"16}
+    % \DeclareMathSymbol{\nu}{\mathord}{letters}{"17}
+    % \DeclareMathSymbol{\xi}{\mathord}{letters}{"18}
+    % \DeclareMathSymbol{\pi}{\mathord}{letters}{"19}
+    % \DeclareMathSymbol{\rho}{\mathord}{letters}{"1A}
+    % \DeclareMathSymbol{\sigma}{\mathord}{letters}{"1B}
+    % \DeclareMathSymbol{\tau}{\mathord}{letters}{"1C}
+    % \DeclareMathSymbol{\upsilon}{\mathord}{letters}{"1D}
+    % \DeclareMathSymbol{\phi}{\mathord}{letters}{"1E}
+    % \DeclareMathSymbol{\chi}{\mathord}{letters}{"1F}
+    % \DeclareMathSymbol{\psi}{\mathord}{letters}{"20}
+    % \DeclareMathSymbol{\omega}{\mathord}{letters}{"21}
+    % \DeclareMathSymbol{\varepsilon}{\mathord}{letters}{"22}
+    % \DeclareMathSymbol{\vartheta}{\mathord}{letters}{"23}
+    % \DeclareMathSymbol{\varpi}{\mathord}{letters}{"24}
+    % \DeclareMathSymbol{\varrho}{\mathord}{letters}{"25}
+    % \DeclareMathSymbol{\varsigma}{\mathord}{letters}{"26}
+    % \DeclareMathSymbol{\varphi}{\mathord}{letters}{"27}
+    
+    % \DeclareMathSymbol{\Gamma}{\mathord}{letters}{"00}
+    % \DeclareMathSymbol{\Delta}{\mathord}{letters}{"01}
+    % \DeclareMathSymbol{\Theta}{\mathord}{letters}{"02}
+    % \DeclareMathSymbol{\Lambda}{\mathord}{letters}{"03}
+    % \DeclareMathSymbol{\Xi}{\mathord}{letters}{"04}
+    % \DeclareMathSymbol{\Pi}{\mathord}{letters}{"05}
+    % \DeclareMathSymbol{\Sigma}{\mathord}{letters}{"06}
+    % \DeclareMathSymbol{\Upsilon}{\mathord}{letters}{"07}
+    % \DeclareMathSymbol{\Phi}{\mathord}{letters}{"08}
+    % \DeclareMathSymbol{\Psi}{\mathord}{letters}{"09}
+    % \DeclareMathSymbol{\Omega}{\mathord}{letters}{"0A}
+    
+    % \DeclareMathSymbol{\upGamma}{\mathalpha}{operators}{"00}
+    % \DeclareMathSymbol{\upDelta}{\mathalpha}{operators}{"01}
+    % \DeclareMathSymbol{\upTheta}{\mathalpha}{operators}{"02}
+    % \DeclareMathSymbol{\upLambda}{\mathalpha}{operators}{"03}
+    % \DeclareMathSymbol{\upXi}{\mathalpha}{operators}{"04}
+    % \DeclareMathSymbol{\upPi}{\mathalpha}{operators}{"05}
+    % \DeclareMathSymbol{\upSigma}{\mathalpha}{operators}{"06}
+    % \DeclareMathSymbol{\upUpsilon}{\mathalpha}{operators}{"07}
+    % \DeclareMathSymbol{\upPhi}{\mathalpha}{operators}{"08}
+    % \DeclareMathSymbol{\upPsi}{\mathalpha}{operators}{"09}
+    % \DeclareMathSymbol{\upOmega}{\mathalpha}{operators}{"0A}
+    
+    %$\alpha \beta \gamma \delta \epsilon \varepsilon \zeta \eta \theta \vartheta \iota \kappa \lambda \mu \nu o \pi \varpi \rho \varrho \sigma \varsigma \tau \upsilon \phi \varphi \chi \psi \omega$
+    
+    %$\Gamma \Delta \Theta \Lambda \Xi \Pi \Sigma \Upsilon \Phi \Psi \Omega$
+    
+    %$\upGamma \upDelta \upTheta \upLambda \upXi \upPi \upSigma \upUpsilon \upPhi \upPsi \upOmega$
+    
+    \newcommand{\hhemail}[1]{\textsf{#1}}
+    \newcommand{\hhurl}[1]{{\color{blue}\url{#1}}}
+    \title{ITP 1}
+    \author{Peter McDaniel}
+    \begin{document}
+        \maketitle
+        \newpage
+    \section*{}
+    \begin{itemize}
+        \item After the release of the thrprogrma there should be an annual savings of at least 80 million kr.
+        \begin{itemize}
+            \item With this we can measure a monetary gain that can be obtained through the application of said project. This creates a lucrative value that can be gained from the completiton of the project.
+        \end{itemize}
+        \item 3 months after the release of the program there should be at least 200 manyears saved each year.
+        \begin{itemize}
+            \item  This will create a great value and can be measured by the increase in cases covered.
+        \end{itemize}
+        \item On release the servers should exist in a singluar location.
+        \begin{itemize}
+            \item This proves intrest by reducing the time and money needed to maintain the system.
+        \end{itemize}
+        \item After the release the system should reduce the amount of manual work by at least 60\%.
+        \begin{itemize}
+            \item This has intrest in increasing the efficiency of the company with the product and tracked by the amount of work completed post release of the project.
+        \end{itemize}
+        \item The Product should reduce the amount of work hours by at least 245 manyears.
+        \begin{itemize}
+            \item This would gain the value in time saved and measureable by the amount a time registered by the workers.
+        \end{itemize}
+    \end{itemize}
+    \section*{}
+    MOV stands for Mesuareble Organizational Value which is used to define the success criteriea which when fulfilled a project can be defined as complete. This needs to be mesureable by cearly defining the goal and mesasuring the amount of tasks that fit the criteria. An example of this could be the amount of users that find the result of the search within 30 seconds. The value is that the resulting product must create some value for the company, this can be an amount of money saved or amount of manhours reduced on a task. This must be agreed upon by the company and the styakeholders to be both attainable and worhtwhile for the company to complete. This has the main purpose of keeping the goals for the product realistic. The goals must be verifiable by the end of the project there do not need to be fulfilled by the end of the project but will need a timeframe for when it can be measured upon.
+    \end{document}
