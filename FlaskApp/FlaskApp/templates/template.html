@@ -34,7 +34,7 @@
       $scope.user = {
         title: 'Developer',
         email: 'ipsum@lorem.com',
-        colorChoice: 'deep-purple',
+        colorChoice: 'purple',
         tags: [],
         firstName: '',
         lastName: '',
@@ -45,7 +45,14 @@
         biography: 'Loves kittens, snowboarding,- and can type at 130 WPM.\n\nAnd rumor has it she bouldered up Castle Craig!',
         postalCode: '94043'
       };
-      $scope.colors = Object.keys($mdColorPalette);
+      $scope.colors = []
+      for (color in $mdColorPalette) {
+        var str = "-";
+        if (!color.includes(str)) {
+          $scope.colors.push(color);
+        }
+      }
+      
       $scope.changeColor = function (color) {
         $scope.user.colorChoice = color;
       };
@@ -54,9 +61,10 @@
     app.config(function ($mdThemingProvider, $mdColorPalette) {
       $mdThemingProvider.alwaysWatchTheme(true);
       angular.forEach(Object.keys($mdColorPalette), function (color) {
-        var strin
-        $mdThemingProvider.theme(color).backgroundPalette(color);
-        console.log(color);
+        var str = "-";
+        if (!color.includes(str)) {
+          $mdThemingProvider.theme(color).backgroundPalette(color);
+        }
       });
     });
     app.controller('AppCtrl', function ($scope, $mdDialog) {
