@@ -2,6 +2,7 @@ from sqlalchemy import String, Column, Table, Integer, ForeignKey, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 import datetime
+from sqlalchemy.sql import select
 Base = declarative_base()
 Event_has_Tags = Table('event_has_tags', Base.metadata,
                        Column("event_id", Integer, ForeignKey("event.id")),
@@ -53,8 +54,12 @@ class Task(Base):
     description = Column(Text)
 
 # create the connection and session
-engine = create_engine("mysql://root:Vibenhus1d@127.0.0.1:3306")
-engine.execute("USE Personal_assistant")
+engine = create_engine("mysql://volerous:fourarms@127.0.0.1:3306")
+engine.execute("USE Personal_Assistant")
 Base.metadata.create_all(engine)
 session_m = sessionmaker(bind=engine)
 Session = session_m()
+begin_date = datetime.now()
+end_date = datetime.now() + datetime.timedelta(hours=5)
+test_event = Event(title="Test Title", begin_date=begin_date, end_date=end_date, all_day=False, event_color="ffffff")
+Session.add(test_event)
