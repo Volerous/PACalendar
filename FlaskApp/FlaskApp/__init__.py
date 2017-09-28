@@ -26,7 +26,7 @@ def background_process():
     print(first, last)
     return jsonify(first_name=first, last_name=last)
 
-    
+
 @app.route("/_insert_event")
 def insert_into_event_back():
     begin_date = request.args.get("begin_date")
@@ -34,11 +34,22 @@ def insert_into_event_back():
     all_day = request.args.get("all_day")
     print(begin_date, end_date)
     # new_event = Event(title=request.args.get("title"), )
-    
+
+
 @app.route('/_delete_event')
 def delete_event_back():
     id = request.args.get("id")
-    
+
+
+@app.route("/create_event.html")
+def show_create_event():
+    return render_template("create_event.html")
+
+
+@app.route("/create_todo.html")
+def show_create_todo():
+    return render_template("create_todo.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
