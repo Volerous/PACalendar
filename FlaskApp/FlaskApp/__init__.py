@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template, jsonify
 from flask import request
-from classes import *
+# from classes import *
 import gtts
 app = Flask(__name__)
 app.config.from_object(__name__)
