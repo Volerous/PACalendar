@@ -45,7 +45,7 @@
         title: 'Developer',
         email: 'ipsum@lorem.com',
         colorChoice: 'purple',
-        // colorHex: $scope.getColor(this.colorChoice + '-background-500'),
+        colorHex: null,
         tags: [],
         firstName: '',
         lastName: ''
@@ -78,7 +78,7 @@
     })
   </script>
 
-  <div ng-controller="DemoCtrl" layout="column" ng-cloak class="md-inline-form" md-theme="{|user.colorChoice|}" md-theme-watch>
+  <!-- <div ng-controller="DemoCtrl" layout="column" ng-cloak class="md-inline-form" md-theme="{|user.colorChoice|}" md-theme-watch>
 
     <md-content md-colors="{background: 'background-hue-3'}" layout-gt-sm="row" layout-padding>
       <div>
@@ -140,14 +140,10 @@
             <label>Description</label>
             <textarea ng-model="user.description" md-maxlength="200" md-select-on-focus></textarea>
           </md-input-container>
-
-          <md-content flex layout-padding ng-model='user.colorHex'>
-            {| user.colorHex |}
-          </md-content>
         </form>
       </div>
     </md-content>
-  </div>
+  </div> -->
   {% block body %} {% endblock %}
 </body>
 
