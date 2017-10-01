@@ -9,21 +9,63 @@
   <!-- CSS  -->
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/angular-material-event-calendar/dist/angular-material-event-calendar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/md-pickers/dist/mdPickers.css') }}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body ng-app="PA-App" ng-cloak>
 
   <!--Scripts-->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js "></script>
+  <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
+  <script src="{{ url_for('static', filename='js/modernizr-custom.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular/angular.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular-aria/angular-aria.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular-animate/angular-animate.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular-messages/angular-messages.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular-material/angular-material.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular-material-event-calendar/dist/angular-material-event-calendar.js') }}"></script>
-
+  <script src="{{ url_for('static', filename='node_modules/md-pickers/dist/mdPickers.js') }}"></script>
   <script type="text/javascript">
-    var app = angular.module('PA-App', ['ngMaterial', 'ngMessages', 'material.components.eventCalendar'])
+    // var moment = require('moment');
+    var app = angular.module('PA-App', ['ngMaterial', 'ngMessages', 'material.components.eventCalendar', 'mdPickers']);
+    app.service('$todoservice', function ($http) {
+      var todoList = [];
+      this.updateList = function () {
+        $http({
+          url: "/_find_all_todo",
+          method: 'GET'
+        })
+          .then(function (data) {
+            for (var i = 0; i < data.data.todos.length; i++) {
+              todoList.push(data.data.todos[i]);
+            };
+          },
+          function (data) {
+            console.log(data);
+          });
+      };
+      this.addToList = function (todo_obj) {
+        todoList.push(todo_obj);
+      };
+      this.buildList = function () {
+        console.log("hello");
+      };
+      this.updateList();
+      this.todoList = todoList;
+
+    });
+    app.service("$colorService", function ($mdColorPalette) {
+      this.colors = [];
+      this.createColors = function () {
+        for (color in $mdColorPalette) {
+          var str = "-";
+          if (!color.includes(str)) {
+            this.colors.push(color);
+          }
+        };
+      }
+      this.createColors();
+    })
     app.config(['$interpolateProvider', function ($interpolateProvider) {
       $interpolateProvider.startSymbol('{|');
       $interpolateProvider.endSymbol('|}');
@@ -37,8 +79,10 @@
         }
       });
     });
-    app.controller('MainCtrl', function ($scope, $mdDialog) {
+    app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice) {
       $scope.customFullscreen = false;
+      // todos = [];
+      $scope.todos = $todoservice.todoList;
       $scope.createEvent = function (ev) {
         $mdDialog.show({
           controller: "DemoCtrl",
@@ -55,11 +99,23 @@
           templateUrl: 'create_todo.html',
           parent: angular.element(document.body),
           targetEvent: ev,
-          clickOutsideToClose: true,
+          clickOutsideToClose: false,
           fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
-          // console.log("todo");
         })
       };
+      $scope.createTag = function (ev) {
+        $mdDialog.show({
+          controller: "TagCtrl",
+          templateUrl: 'create_tag.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: false,
+          fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+        }).then(function (todo_obj) {
+          $scope.todos.push(todo_obj);
+        }, function () { });
+      };
+
       function DialogController($scope, $mdDialog) {
         $scope.hide = function () {
           $mdDialog.hide();
@@ -74,66 +130,101 @@
         };
       }
     });
-    app.controller('DemoCtrl', function ($scope, $mdColorPalette, $mdColorUtil, $mdColors) {
-      $scope.getColor = function (color) {
-        return $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color))
-      };
+    app.controller('DemoCtrl', function ($scope, $colorService) {
       $scope.user = {
         title: 'Developer',
         email: 'ipsum@lorem.com',
         colorChoice: 'purple',
-        colorHex: null,
-        tags: [],
-        firstName: '',
-        lastName: ''
+        tags: []
       };
-      $scope.colors = []
-      for (color in $mdColorPalette) {
-        var str = "-";
-        if (!color.includes(str)) {
-          $scope.colors.push(color);
-        }
-      }
-
-      $scope.changeColor = function (color) {
-        $scope.user.colorChoice = color;
-        $scope.user.colorHex = $scope.getColor($scope.user.colorChoice + '-background-hue-3');
-      };
+      $scope.colors = $colorService.colors;
     });
-    app.controller("EventCtrl", function ($scope, $mdColorPalette, $mdColorUtil, $mdColors) {
+    app.controller("EventCtrl", function ($scope, $colorService, $mdColorUtil, $mdColors, $mdDialog, $http, $mdpDatePicker, $mdpTimePicker) {
       $scope.getColor = function (color) {
         return $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color))
       };
       $scope.todo = {
-        title: null,
-        dueDate: null,
+        title: '',
+        dueDateTime: null,
         color: 'purple',
-        colorHex: null,
-        completed: null,
-        priority: null,
+        completed: false,
+        priority: 3,
         tags: [],
-        description: null
+        description: ''
       };
-      $scope.colors = []
-      for (color in $mdColorPalette) {
-        var str = "-";
-        if (!color.includes(str)) {
-          $scope.colors.push(color);
+      $scope.colors = $colorService.colors;
+      $scope.done = function () {
+        if ($scope.todo.title !== '') {
+          console.log($scope.todo);
+          $scope.todo.dueDateTime = moment($scope.todo.dueDateTime).toISOString();
+          $http({
+            url: "/_insert_todo",
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify($scope.todo)
+          })
+            .then(function (success) {
+              $scope.todo.id = success.data.id;
+            },
+            function (data) {
+              console.log("error");
+              console.log(data);
+            });
+          $mdDialog.hide($scope.todo);
         }
       };
-      $scope.changeColor = function (color) {
-        $scope.todo.color = color;
-        $scope.todo.colorHex = $scope.getColor($scope.todo.color + '-background-hue-3');
-      };
+      $scope.cancel = function () {
+        $mdDialog.cancel();
+      }
+    });
+    app.controller("TagCtrl", function ($scope, $http, $colorService) {
+      $scope.tag = {
+        title: '',
+        color: 'purple'
+      }
+      $scope.colors = $colorService.colors;
+
     });
   </script>
-  <div ng-controller="MainCtrl">
-    <md-button class="md-primary md-raised" ng-click="createEvent($event)">
-      Create an Event
-    </md-button>
-    <md-button class="md-primary md-raised" ng-click="createToDo($event)">
-      Create a ToDo
-    </md-button>
+  <div ng-controller="MainCtrl" n-cloak>
+    <div flex-xs flex-gt-xs="50" layout="column">
+      <md-button class="md-primary md-raised" ng-click="createEvent($event)">
+        Create an Event
+      </md-button>
+      <md-button class="md-primary md-raised" ng-click="createTag($event)">
+        Create a Tag
+      </md-button>
+
+      <md-card>
+        <md-card-title>
+          <div class="md-toolbar-tools">
+            <span flex>To-Do</span>
+            <md-button class="md-primary md-raised" ng-click="createToDo($event)">
+              Create a ToDo
+            </md-button>
+          </div>
+        </md-card-title>
+        <md-card-content style="height: 600px; overflow-y: auto">
+          <md-list class="md-dense" flex>
+            <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="null" class="md-3-line" md-colors="{background: '{|todo.color|}' + '-background-200'}">
+              <md-checkbox aria-label="completed Checkboxes" ng-model="todo.completed" ng-true-value=true ng-false-value=false></md-checkbox>
+              <div class="md-list-item-text">
+                <h3>{| todo.title |}</h3>
+                <p>{| todo.description |}</p>
+                <p>{|todo.color|}</p>
+                <md-badge>hello</md-badge>
+              </div>
+              <md-button class="md-icon-button launch" ng-click="deleteToDo($event)">
+                <i class="material-icons">delete</i>
+              </md-button>
+              <md-button class="md-icon-button launch">
+                <i class="material-icons">more_vert</i>
+              </md-button>
+            </md-list-item>
+          </md-list>
+        </md-card-content>
+      </md-card>
+    </div>
   </div>
 </body>
 

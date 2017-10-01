@@ -1,8 +1,10 @@
 from flask import Flask
 from flask import render_template, jsonify
 from flask import request
-# from classes import *
+from classes import *
 import gtts
+import datetime
+import dateutil.parser
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -49,6 +51,70 @@ def show_create_event():
 @app.route("/create_todo.html")
 def show_create_todo():
     return render_template("create_todo.html")
+
+
+@app.route("/_insert_todo", methods=['GET', "POST"])
+def insert_todo():
+    post = request.get_json()
+    # color = post["colorHex"].replace("#", "")
+    if "dueDateTime" not in post:
+        due_date = dateutil.parser.parse(post["dueDateTime"])
+        task_to_insert = Task(
+            name=post["title"], color=post["color"], due_date=due_date, completed=False, description=post["description"], priority=post["priority"])
+    else:
+        task_to_insert = Task(
+            name=post["title"], color=post["color"], completed=False, description=post["description"], priority=post["priority"])
+    Session.add(task_to_insert)
+    Session.commit()
+    print(task_to_insert.id)
+    task_to_insert.str_tags = post["tags"]
+    Session.commit()
+    return jsonify(success=True, id=task_to_insert.id)
+
+
+@app.route("/test")
+def test():
+    for i in Session.query(Task).all():
+        for j in i.tags:
+            print(j.title)
+    return "Task.color"
+
+
+@app.route("/_find_all_todo")
+def find_all_todo():
+    q = Session.query(Task).filter_by(completed=False).all()
+    json_list = []
+    for i in q:
+        item = {}
+        item["id"] = i.id
+        item["title"] = i.name
+        item["completed"] = i.completed
+        item["priority"] = i.priority
+        item["color"] = i.color
+        item["description"] = i.description
+        item["due_date"] = i.due_date
+        item["tags"] = []
+        for j in i.tags:
+            item["tags"].append(j.title)
+        json_list.append(item)
+    return jsonify(success=True, todos=json_list)
+
+
+@app.route("/_insert_tag", methods=["POST", "GET"])
+def insert_tag():
+    post = request.get_json()
+    if "color" in post:
+        tag_to_insert = Tag(title=post["title"], color=post["color"])
+    else:
+        tag_to_insert = Tag(title=post["title"])
+    Session.add(tag_to_insert)
+    Session.commit()
+    return jsonify(success=True)
+
+
+@app.route("/create_tag.html")
+def create_tag():
+    return render_template("create_tag.html")
 
 
 if __name__ == "__main__":

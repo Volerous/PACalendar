@@ -1,0 +1,35 @@
+<md-dialog>
+  <div ng-controller="TagCtrl" layout="column" ng-cloak class="md-inline-form">
+    <md-toolbar>
+      <div class="md-icon-box">
+        <h2> Create Tag</h2>
+      </div>
+    </md-toolbar>
+  </div>
+  <md-content layout-padding>
+    <div>
+      <form name="TagForm">
+        <div layout-gt-xs="row" md-colors="{background: '{|tag.color|}-background-hue-3'}">
+          <md-input-container>
+            <label>Title</label>
+            <input ng-model="tag.title" required name="title">
+            <div ng-messages="TagForm.title.$error">
+              <div ng-message="required">
+                You must give the tag a title
+              </div>
+            </div>
+          </md-input-container>
+        </div>
+        <div layout-gt-xs="row">
+          <md-input-container>
+            <md-select ng-model="tag.color" aria-label="Tag Color">
+              <md-option ng-repeat="color in colors" ng-value="color" md-colors="{background: '{|color|}' + '-background-500'}">
+                {|color|}
+              </md-option>
+            </md-select>
+          </md-input-container>
+        </div>
+      </form>
+    </div>
+  </md-content>
+</md-dialog>

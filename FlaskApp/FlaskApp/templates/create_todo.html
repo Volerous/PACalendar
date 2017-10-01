@@ -6,46 +6,67 @@
       </div>
     </md-toolbar>
   </div>
-  <md-content md-colors="{background: '{|todo.color|}-background-hue-3'}" layout-gt-sm="row" layout-padding>
-    <div>
-      <md-input-container>
-        <label>Title</label>
-        <input ng-model="todo.title">
-      </md-input-container>
-    </div>
-  </md-content>
   <md-content layout-padding>
     <div>
       <form name="TodoForm">
-
-        <div layout-gt-xs="row">
-          <md-input-container class="md-block" flex-gt-xs>
-            <label>Tags</label>
-            <md-chips ng-model="todo.tags">
-            </md-chips>
+        <div layout-gt-xs="row" md-colors="{background: '{|todo.color|}-background-hue-3'}">
+          <md-input-container>
+            <label>Title</label>
+            <input ng-model="todo.title" required name="title">
+            <div ng-messages="TodoForm.title.$error">
+              <div ng-message="required">
+                You must give the task a title
+              </div>
+            </div>
           </md-input-container>
+        </div>
+        <div layout-gt-xs="row">
+          <div class="chips-container" flex>
+            <md-chips ng-model="todo.tags">
+              <input type="text" placeholder="Tags">
+            </md-chips>
+          </div>
 
           <md-input-container>
-            <md-select ng-model="todo.color">
-              <md-option ng-repeat="color in colors" ng-value="color" md-colors="{background: '{|color|}' + '-background-500'}">
+            <md-select ng-model="todo.color" aria-label="ToDo Color">
+              <md-option ng-repeat="color in colors" ng-value="color" md-colors="{background: '{|color|}' + '-background-500'}" ng-click="changeColor(color)">
                 {|color|}
               </md-option>
             </md-select>
           </md-input-container>
         </div>
         <div layout-gt-xs="row">
-          <md-input-container class="md-block">
-            <label>Due Date</label>
-            <md-datepicker ng-model="todo.beginDate"></md-datepicker>
+          <mdp-date-picker ng-model="todo.dueDateTime" mdp-placeholder="Due Date" mdp-ok-label="Accept" mdp-cancel-label="Cancel" mdp-format="DD-MM-YYYY"
+            mdp-clear-on-cancel="false"></mdp-date-picker>
+          <mdp-time-picker ng-model="todo.dueDateTime" mdp-placeholder="Due Time" mdp-ok-label="Accept" mdp-cancel-label="Cancel" mdp-format="HH:mm"
+            mdp-auto-switch="true" mdp-ampm="false" mdp-clear-on-cancel="false"></mdp-time-picker>
+        </div>
+        <div layout-gt-xs="row">
+          <md-input-container class="md-block" flex>
+            <label>Description</label>
+            <textarea ng-model="todo.description" md-maxlength="200" md-select-on-focus></textarea>
           </md-input-container>
-
-          <md-input-container>
-            <label>Due Time</label>
-            <md-datepicker ng-model="todo.beginTime"></md-datepicker>
-          </md-input-container>
-
         </div>
 
+        <div layout-gt-xs="row">
+          <md-radio-group layout="row" ng-model="todo.priority" layout-align="center">
+            <md-radio-button value=1>1</md-radio-button>
+            <md-radio-button value=2>2</md-radio-button>
+            <md-radio-button value=3>3</md-radio-button>
+            <md-radio-button value=4>4</md-radio-button>
+            <md-radio-button value=5>5</md-radio-button>
+          </md-radio-group>
+        </div>
+
+        <md-dialog-actions>
+          <md-button ng-click="cancel()">
+            Cancel
+          </md-button>
+          <span flex></span>
+          <md-button type="submit" ng-click="done()">
+            Accept
+          </md-button>
+        </md-dialog-actions>
       </form>
     </div>
   </md-content>

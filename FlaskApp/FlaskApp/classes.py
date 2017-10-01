@@ -24,14 +24,35 @@ class Event(Base):
     busy_level = Column(Integer)
     contact = Column(String(50))
     location = Column(ForeignKey("location.id"))
-    tags = relationship("Tag", secondary=Event_has_Tags)
+    tags = relationship("Tag", secondary=Event_has_Tags, backref="event")
 
+    def _find_or_create_tag(self, tag):
+        q = Tag.query.filter_by(name=tag)
+        t = q.first()
+        if not(t):
+            t = Tag(tag)
+        return t
+
+    def _get_tags(self):
+        return [x.name for x in self.tags]
+
+    def _set_tags(self, value):
+        # clear the list first
+        while self.tags:
+            del self.tags[0]
+        # add new tags
+        for tag in value:
+            self.tags.append(self._find_or_create_tag(tag))
+
+    str_tags = property(_get_tags,
+                        _set_tags,
+                        "Property str_tags is a simple wrapper for tags relation")
 
 class Tag(Base):
     __tablename__ = "tag"
     id = Column(Integer, primary_key=True, nullable=False)
     title = Column(String(100), nullable=False)
-    color = Column(String(6), nullable=False)
+    color = Column(String(6))
 
 
 class Location(Base):
@@ -48,10 +69,34 @@ class Task(Base):
     __tablename__ = "task"
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(100), nullable=False)
-    due_date = Column(DateTime, nullable=False)
+    due_date = Column(DateTime)
     completed = Column(Boolean, nullable=False)
     priority = Column(Integer, nullable=False)
     description = Column(Text)
+    color = Column(String(10))
+    tags = relationship("Tag", secondary=Task_has_Tags, backref="task")
+
+    def _find_or_create_tag(self, tag):
+        q = Session.query(Tag).filter_by(title=tag)
+        t = q.first()
+        if not(t):
+            t = Tag(title=tag)
+        return t
+
+    def _get_tags(self):
+        return [x.name for x in self.tags]
+
+    def _set_tags(self, value):
+        # clear the list first
+        while self.tags:
+            del self.tags[0]
+        # add new tags
+        for tag in value:
+            self.tags.append(self._find_or_create_tag(tag))
+
+    str_tags = property(_get_tags,
+                        _set_tags,
+                        "Property str_tags is a simple wrapper for tags relation")
 
 # create the connection and session
 engine = create_engine("mysql://volerous:fourarms@127.0.0.1:3306")
@@ -59,7 +104,3 @@ engine.execute("USE Personal_Assistant")
 Base.metadata.create_all(engine)
 session_m = sessionmaker(bind=engine)
 Session = session_m()
-begin_date = datetime.now()
-end_date = datetime.now() + datetime.timedelta(hours=5)
-test_event = Event(title="Test Title", begin_date=begin_date, end_date=end_date, all_day=False, event_color="ffffff")
-Session.add(test_event)
