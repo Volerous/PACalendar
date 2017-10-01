@@ -206,13 +206,12 @@
         </md-card-title>
         <md-card-content style="height: 600px; overflow-y: auto">
           <md-list class="md-dense" flex>
-            <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="null" class="md-3-line" md-colors="{background: '{|todo.color|}' + '-background-200'}">
+            <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="null" class="md-2-line">
               <md-checkbox aria-label="completed Checkboxes" ng-model="todo.completed" ng-true-value=true ng-false-value=false></md-checkbox>
               <div class="md-list-item-text">
-                <h3>{| todo.title |}</h3>
+                <span md-colors="{color:'{|todo.color|}' + '-background-200'}">{|todo.title|}</span>
                 <p>{| todo.description |}</p>
                 <p>{|todo.color|}</p>
-                <md-badge>hello</md-badge>
               </div>
               <md-button class="md-icon-button launch" ng-click="deleteToDo($event)">
                 <i class="material-icons">delete</i>
