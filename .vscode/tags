@@ -7,51 +7,66 @@
 Base	../FlaskApp/FlaskApp/classes.py	/^Base = declarative_base()$/;"	kind:variable	line:6
 Event	../FlaskApp/FlaskApp/classes.py	/^class Event(Base):$/;"	kind:class	line:15
 Event_has_Tags	../FlaskApp/FlaskApp/classes.py	/^Event_has_Tags = Table('event_has_tags', Base.metadata,$/;"	kind:variable	line:7
-Location	../FlaskApp/FlaskApp/classes.py	/^class Location(Base):$/;"	kind:class	line:37
-Session	../FlaskApp/FlaskApp/classes.py	/^Session = session_m()$/;"	kind:variable	line:61
-Tag	../FlaskApp/FlaskApp/classes.py	/^class Tag(Base):$/;"	kind:class	line:30
-Task	../FlaskApp/FlaskApp/classes.py	/^class Task(Base):$/;"	kind:class	line:47
+Location	../FlaskApp/FlaskApp/classes.py	/^class Location(Base):$/;"	kind:class	line:58
+Session	../FlaskApp/FlaskApp/classes.py	/^Session = session_m()$/;"	kind:variable	line:106
+Tag	../FlaskApp/FlaskApp/classes.py	/^class Tag(Base):$/;"	kind:class	line:51
+Task	../FlaskApp/FlaskApp/classes.py	/^class Task(Base):$/;"	kind:class	line:68
 Task_has_Tags	../FlaskApp/FlaskApp/classes.py	/^Task_has_Tags = Table('task_has_tags', Base.metadata,$/;"	kind:variable	line:10
 __init__.py	../FlaskApp/FlaskApp/__init__.py	1;"	kind:file	line:1
 __tablename__	../FlaskApp/FlaskApp/classes.py	/^    __tablename__ = "event"$/;"	kind:variable	line:16
-__tablename__	../FlaskApp/FlaskApp/classes.py	/^    __tablename__ = "location"$/;"	kind:variable	line:38
-__tablename__	../FlaskApp/FlaskApp/classes.py	/^    __tablename__ = "tag"$/;"	kind:variable	line:31
-__tablename__	../FlaskApp/FlaskApp/classes.py	/^    __tablename__ = "task"$/;"	kind:variable	line:48
-address	../FlaskApp/FlaskApp/classes.py	/^    address = Column(String(80), nullable=False)$/;"	kind:variable	line:41
+__tablename__	../FlaskApp/FlaskApp/classes.py	/^    __tablename__ = "location"$/;"	kind:variable	line:59
+__tablename__	../FlaskApp/FlaskApp/classes.py	/^    __tablename__ = "tag"$/;"	kind:variable	line:52
+__tablename__	../FlaskApp/FlaskApp/classes.py	/^    __tablename__ = "task"$/;"	kind:variable	line:69
+_find_or_create_tag	../FlaskApp/FlaskApp/classes.py	/^    def _find_or_create_tag(self, tag):$/;"	kind:member	line:29
+_find_or_create_tag	../FlaskApp/FlaskApp/classes.py	/^    def _find_or_create_tag(self, tag):$/;"	kind:member	line:79
+_get_tags	../FlaskApp/FlaskApp/classes.py	/^    def _get_tags(self):$/;"	kind:member	line:36
+_get_tags	../FlaskApp/FlaskApp/classes.py	/^    def _get_tags(self):$/;"	kind:member	line:86
+_set_tags	../FlaskApp/FlaskApp/classes.py	/^    def _set_tags(self, value):$/;"	kind:member	line:39
+_set_tags	../FlaskApp/FlaskApp/classes.py	/^    def _set_tags(self, value):$/;"	kind:member	line:89
+address	../FlaskApp/FlaskApp/classes.py	/^    address = Column(String(80), nullable=False)$/;"	kind:variable	line:62
 all_day	../FlaskApp/FlaskApp/classes.py	/^    all_day = Column(Boolean, nullable=False)$/;"	kind:variable	line:21
-app	../FlaskApp/FlaskApp/__init__.py	/^app = Flask(__name__)$/;"	kind:variable	line:6
-background_page	../FlaskApp/FlaskApp/__init__.py	/^def background_page():$/;"	kind:function	line:17
-background_process	../FlaskApp/FlaskApp/__init__.py	/^def background_process():$/;"	kind:function	line:23
+app	../FlaskApp/FlaskApp/__init__.py	/^app = Flask(__name__)$/;"	kind:variable	line:8
+background_page	../FlaskApp/FlaskApp/__init__.py	/^def background_page():$/;"	kind:function	line:19
+background_process	../FlaskApp/FlaskApp/__init__.py	/^def background_process():$/;"	kind:function	line:25
 begin_date	../FlaskApp/FlaskApp/classes.py	/^    begin_date = Column(DateTime, nullable=False)$/;"	kind:variable	line:19
-begin_date	../FlaskApp/FlaskApp/classes.py	/^begin_date = datetime.now()$/;"	kind:variable	line:62
 busy_level	../FlaskApp/FlaskApp/classes.py	/^    busy_level = Column(Integer)$/;"	kind:variable	line:24
 classes.py	../FlaskApp/FlaskApp/classes.py	1;"	kind:file	line:1
-color	../FlaskApp/FlaskApp/classes.py	/^    color = Column(String(6), nullable=False)$/;"	kind:variable	line:34
-completed	../FlaskApp/FlaskApp/classes.py	/^    completed = Column(Boolean, nullable=False)$/;"	kind:variable	line:52
+color	../FlaskApp/FlaskApp/classes.py	/^    color = Column(String(10))$/;"	kind:variable	line:76
+color	../FlaskApp/FlaskApp/classes.py	/^    color = Column(String(6))$/;"	kind:variable	line:55
+completed	../FlaskApp/FlaskApp/classes.py	/^    completed = Column(Boolean, nullable=False)$/;"	kind:variable	line:73
 contact	../FlaskApp/FlaskApp/classes.py	/^    contact = Column(String(50))$/;"	kind:variable	line:25
-data_type	../FlaskApp/FlaskApp/classes.py	/^    data_type = Column(String(30), nullable=False)$/;"	kind:variable	line:44
-delete_event_back	../FlaskApp/FlaskApp/__init__.py	/^def delete_event_back():$/;"	kind:function	line:39
+create_tag	../FlaskApp/FlaskApp/__init__.py	/^def create_tag():$/;"	kind:function	line:116
+data_type	../FlaskApp/FlaskApp/classes.py	/^    data_type = Column(String(30), nullable=False)$/;"	kind:variable	line:65
+delete_event_back	../FlaskApp/FlaskApp/__init__.py	/^def delete_event_back():$/;"	kind:function	line:42
+delete_todo	../FlaskApp/FlaskApp/__init__.py	/^def delete_todo():$/;"	kind:function	line:121
 description	../FlaskApp/FlaskApp/classes.py	/^    description = Column(Text)$/;"	kind:variable	line:23
-description	../FlaskApp/FlaskApp/classes.py	/^    description = Column(Text)$/;"	kind:variable	line:54
-due_date	../FlaskApp/FlaskApp/classes.py	/^    due_date = Column(DateTime, nullable=False)$/;"	kind:variable	line:51
+description	../FlaskApp/FlaskApp/classes.py	/^    description = Column(Text)$/;"	kind:variable	line:75
+due_date	../FlaskApp/FlaskApp/classes.py	/^    due_date = Column(DateTime)$/;"	kind:variable	line:72
 end_date	../FlaskApp/FlaskApp/classes.py	/^    end_date = Column(DateTime, nullable=False)$/;"	kind:variable	line:20
-end_date	../FlaskApp/FlaskApp/classes.py	/^end_date = datetime.now() + datetime.timedelta(hours=5)$/;"	kind:variable	line:63
-engine	../FlaskApp/FlaskApp/classes.py	/^engine = create_engine("mysql:\/\/volerous:fourarms@127.0.0.1:3306")$/;"	kind:variable	line:57
+engine	../FlaskApp/FlaskApp/classes.py	/^engine = create_engine("mysql:\/\/volerous:fourarms@127.0.0.1:3306")$/;"	kind:variable	line:102
 event_color	../FlaskApp/FlaskApp/classes.py	/^    event_color = Column(String(6), nullable=False)$/;"	kind:variable	line:22
-hello	../FlaskApp/FlaskApp/__init__.py	/^def hello():$/;"	kind:function	line:11
+find_all_todo	../FlaskApp/FlaskApp/__init__.py	/^def find_all_todo():$/;"	kind:function	line:84
+hello	../FlaskApp/FlaskApp/__init__.py	/^def hello():$/;"	kind:function	line:13
 id	../FlaskApp/FlaskApp/classes.py	/^    id = Column(Integer, primary_key=True, nullable=False)$/;"	kind:variable	line:17
-id	../FlaskApp/FlaskApp/classes.py	/^    id = Column(Integer, primary_key=True, nullable=False)$/;"	kind:variable	line:32
-id	../FlaskApp/FlaskApp/classes.py	/^    id = Column(Integer, primary_key=True, nullable=False)$/;"	kind:variable	line:39
-id	../FlaskApp/FlaskApp/classes.py	/^    id = Column(Integer, primary_key=True, nullable=False)$/;"	kind:variable	line:49
-insert_into_event_back	../FlaskApp/FlaskApp/__init__.py	/^def insert_into_event_back():$/;"	kind:function	line:31
-lat	../FlaskApp/FlaskApp/classes.py	/^    lat = Column(Float, nullable=False)$/;"	kind:variable	line:42
-lng	../FlaskApp/FlaskApp/classes.py	/^    lng = Column(Float, nullable=False)$/;"	kind:variable	line:43
+id	../FlaskApp/FlaskApp/classes.py	/^    id = Column(Integer, primary_key=True, nullable=False)$/;"	kind:variable	line:53
+id	../FlaskApp/FlaskApp/classes.py	/^    id = Column(Integer, primary_key=True, nullable=False)$/;"	kind:variable	line:60
+id	../FlaskApp/FlaskApp/classes.py	/^    id = Column(Integer, primary_key=True, nullable=False)$/;"	kind:variable	line:70
+insert_into_event_back	../FlaskApp/FlaskApp/__init__.py	/^def insert_into_event_back():$/;"	kind:function	line:33
+insert_tag	../FlaskApp/FlaskApp/__init__.py	/^def insert_tag():$/;"	kind:function	line:104
+insert_todo	../FlaskApp/FlaskApp/__init__.py	/^def insert_todo():$/;"	kind:function	line:57
+lat	../FlaskApp/FlaskApp/classes.py	/^    lat = Column(Float, nullable=False)$/;"	kind:variable	line:63
+lng	../FlaskApp/FlaskApp/classes.py	/^    lng = Column(Float, nullable=False)$/;"	kind:variable	line:64
 location	../FlaskApp/FlaskApp/classes.py	/^    location = Column(ForeignKey("location.id"))$/;"	kind:variable	line:26
-name	../FlaskApp/FlaskApp/classes.py	/^    name = Column(String(100), nullable=False)$/;"	kind:variable	line:50
-name	../FlaskApp/FlaskApp/classes.py	/^    name = Column(String(60), nullable=False)$/;"	kind:variable	line:40
-priority	../FlaskApp/FlaskApp/classes.py	/^    priority = Column(Integer, nullable=False)$/;"	kind:variable	line:53
-session_m	../FlaskApp/FlaskApp/classes.py	/^session_m = sessionmaker(bind=engine)$/;"	kind:variable	line:60
-tags	../FlaskApp/FlaskApp/classes.py	/^    tags = relationship("Tag", secondary=Event_has_Tags)$/;"	kind:variable	line:27
-test_event	../FlaskApp/FlaskApp/classes.py	/^test_event = Event(title="Test Title", begin_date=begin_date, end_date=end_date, all_day=False, event_color="ffffff")$/;"	kind:variable	line:64
+name	../FlaskApp/FlaskApp/classes.py	/^    name = Column(String(100), nullable=False)$/;"	kind:variable	line:71
+name	../FlaskApp/FlaskApp/classes.py	/^    name = Column(String(60), nullable=False)$/;"	kind:variable	line:61
+priority	../FlaskApp/FlaskApp/classes.py	/^    priority = Column(Integer, nullable=False)$/;"	kind:variable	line:74
+session_m	../FlaskApp/FlaskApp/classes.py	/^session_m = sessionmaker(bind=engine)$/;"	kind:variable	line:105
+show_create_event	../FlaskApp/FlaskApp/__init__.py	/^def show_create_event():$/;"	kind:function	line:47
+show_create_todo	../FlaskApp/FlaskApp/__init__.py	/^def show_create_todo():$/;"	kind:function	line:52
+str_tags	../FlaskApp/FlaskApp/classes.py	/^    str_tags = property(_get_tags,$/;"	kind:variable	line:47
+str_tags	../FlaskApp/FlaskApp/classes.py	/^    str_tags = property(_get_tags,$/;"	kind:variable	line:97
+tags	../FlaskApp/FlaskApp/classes.py	/^    tags = relationship("Tag", secondary=Event_has_Tags, backref="event")$/;"	kind:variable	line:27
+tags	../FlaskApp/FlaskApp/classes.py	/^    tags = relationship("Tag", secondary=Task_has_Tags, backref="task")$/;"	kind:variable	line:77
+test	../FlaskApp/FlaskApp/__init__.py	/^def test():$/;"	kind:function	line:76
 title	../FlaskApp/FlaskApp/classes.py	/^    title = Column(String(100), nullable=False)$/;"	kind:variable	line:18
-title	../FlaskApp/FlaskApp/classes.py	/^    title = Column(String(100), nullable=False)$/;"	kind:variable	line:33
+title	../FlaskApp/FlaskApp/classes.py	/^    title = Column(String(100), nullable=False)$/;"	kind:variable	line:54

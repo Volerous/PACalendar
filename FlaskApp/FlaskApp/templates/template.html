@@ -50,6 +50,17 @@
       this.buildList = function () {
         console.log("hello");
       };
+      this.deleteTodo = function (ev, id) {
+        $http({
+          url: "/_delete_todo",
+          method: 'POST',
+          data: { id: id }
+        }).then(function (data) {
+          console.log(data);
+        }, function (data) {
+          console.log("error");
+        })
+      }
       this.updateList();
       this.todoList = todoList;
 
@@ -79,10 +90,35 @@
         }
       });
     });
-    app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice) {
+    app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice, $mdToast) {
       $scope.customFullscreen = false;
-      // todos = [];
       $scope.todos = $todoservice.todoList;
+      $scope.deleteTodo = function (ev, todo) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirm = $mdDialog.confirm()
+          .title('Delete' + todo.title + '?')
+          .ariaLabel('Delete Task')
+          .targetEvent(ev)
+          .ok('Delete Task')
+          .cancel('Cancel');
+
+        $mdDialog.show(confirm).then(function () {
+          $todoservice.deleteTodo(ev, todo.id);
+          var eleToRemove = $scope.todos.indexOf(todo);
+          $scope.showDeleteTodoTaost();
+          $scope.todos.splice(eleToRemove, 1);
+        }, function () {
+
+        });
+      };
+      $scope.showDeleteTodoTaost = function () {
+        $mdToast.show(
+          $mdToast.simple()
+            .textContent('Task Deleted')
+            .position('bottom right')
+            .hideDelay(3000)
+        );
+      }
       $scope.createEvent = function (ev) {
         $mdDialog.show({
           controller: "DemoCtrl",
@@ -101,6 +137,10 @@
           targetEvent: ev,
           clickOutsideToClose: false,
           fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+        }).then(function (todo) {
+          $scope.todos.push(todo);
+        }, function () {
+
         })
       };
       $scope.createTag = function (ev) {
@@ -209,11 +249,10 @@
             <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="null" class="md-2-line">
               <md-checkbox aria-label="completed Checkboxes" ng-model="todo.completed" ng-true-value=true ng-false-value=false></md-checkbox>
               <div class="md-list-item-text">
-                <span md-colors="{color:'{|todo.color|}' + '-background-200'}">{|todo.title|}</span>
+                <span md-colors="{color:'{|todo.color|}' + '-background-500'}">{|todo.title|}</span>
                 <p>{| todo.description |}</p>
-                <p>{|todo.color|}</p>
               </div>
-              <md-button class="md-icon-button launch" ng-click="deleteToDo($event)">
+              <md-button class="md-icon-button launch" ng-click="deleteTodo($event, todo)">
                 <i class="material-icons">delete</i>
               </md-button>
               <md-button class="md-icon-button launch">

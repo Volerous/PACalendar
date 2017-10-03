@@ -117,5 +117,14 @@ def create_tag():
     return render_template("create_tag.html")
 
 
+@app.route("/_delete_todo", methods=["GET", "POST"])
+def delete_todo():
+    post = request.get_json()
+    q = Session.query(Task).filter_by(id=post["id"]).all()
+    Session.delete(q[0])
+    Session.commit()
+    return jsonify(success=True)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
