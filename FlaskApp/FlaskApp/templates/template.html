@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/angular-material-event-calendar/dist/angular-material-event-calendar.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/md-pickers/dist/mdPickers.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
@@ -18,6 +19,7 @@
   <!--Scripts-->
   <script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
   <script src="{{ url_for('static', filename='js/modernizr-custom.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/date.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular/angular.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular-aria/angular-aria.js') }}"></script>
   <script src="{{ url_for('static', filename='node_modules/angular-animate/angular-animate.js') }}"></script>
@@ -30,7 +32,7 @@
     var app = angular.module('PA-App', ['ngMaterial', 'ngMessages', 'material.components.eventCalendar', 'mdPickers']);
     app.service('$todoservice', function ($http) {
       var todoList = [];
-      this.updateList = function () {
+      this.updateListTodos = function () {
         $http({
           url: "/_find_all_todo",
           method: 'GET'
@@ -44,24 +46,32 @@
             console.log(data);
           });
       };
+      var retval;
+      this.checkTodo = function (todo) {
+        return $http({
+          url: '/_check_todo',
+          method: "POST",
+          data: todo
+        });
+
+      };
       this.addToList = function (todo_obj) {
         todoList.push(todo_obj);
-      };
-      this.buildList = function () {
-        console.log("hello");
       };
       this.deleteTodo = function (ev, id) {
         $http({
           url: "/_delete_todo",
           method: 'POST',
           data: { id: id }
-        }).then(function (data) {
-          console.log(data);
-        }, function (data) {
-          console.log("error");
         })
+          .then(function (data) {
+            console.log(data);
+          },
+          function (data) {
+            console.log("error");
+          })
       }
-      this.updateList();
+      this.updateListTodos();
       this.todoList = todoList;
 
     });
@@ -105,20 +115,35 @@
         $mdDialog.show(confirm).then(function () {
           $todoservice.deleteTodo(ev, todo.id);
           var eleToRemove = $scope.todos.indexOf(todo);
-          $scope.showDeleteTodoTaost();
+          $scope.showToast("Task Deleted");
           $scope.todos.splice(eleToRemove, 1);
         }, function () {
 
         });
       };
-      $scope.showDeleteTodoTaost = function () {
+      $scope.showToast = function (info) {
         $mdToast.show(
           $mdToast.simple()
-            .textContent('Task Deleted')
+            .textContent(info)
             .position('bottom right')
             .hideDelay(3000)
         );
-      }
+      };
+      $scope.checkTodo = function (ev, todo) {
+        $todoservice.checkTodo(todo).then(function () {
+          var eleToRemove = $scope.todos.indexOf(todo);
+          // $scope.todos.splice(eleToRemove, 1);
+          $scope.showToast("Task marked as comeplete");
+        }, function () { $scope.showToast("Task not marked as complete"); });
+      };
+      $scope.checkDate = function (date) {
+        var numDays = Math.ceil((Date.parse(date).getTime() - Date.today().getTime()) / (1000 * 3600 * 24));
+        if (numDays === 1) {
+          return "Tomorrow";
+        } else {
+          return "in " + days + " days";
+        }
+      };
       $scope.createEvent = function (ev) {
         $mdDialog.show({
           controller: "DemoCtrl",
@@ -137,12 +162,15 @@
           targetEvent: ev,
           clickOutsideToClose: false,
           fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
-        }).then(function (todo) {
-          $scope.todos.push(todo);
-        }, function () {
-
         })
+          .then(function (todo) {
+            $scope.todos.push(todo);
+          },
+          function () {
+
+          })
       };
+
       $scope.createTag = function (ev) {
         $mdDialog.show({
           controller: "TagCtrl",
@@ -151,24 +179,12 @@
           targetEvent: ev,
           clickOutsideToClose: false,
           fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
-        }).then(function (todo_obj) {
-          $scope.todos.push(todo_obj);
-        }, function () { });
+        })
+          .then(function (todo_obj) {
+            $scope.todos.push(todo_obj);
+          },
+          function () { });
       };
-
-      function DialogController($scope, $mdDialog) {
-        $scope.hide = function () {
-          $mdDialog.hide();
-        };
-
-        $scope.cancel = function () {
-          $mdDialog.cancel();
-        };
-
-        $scope.answer = function (answer) {
-          $mdDialog.hide(answer);
-        };
-      }
     });
     app.controller('DemoCtrl', function ($scope, $colorService) {
       $scope.user = {
@@ -247,10 +263,14 @@
         <md-card-content style="height: 600px; overflow-y: auto">
           <md-list class="md-dense" flex>
             <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="null" class="md-2-line">
-              <md-checkbox aria-label="completed Checkboxes" ng-model="todo.completed" ng-true-value=true ng-false-value=false></md-checkbox>
+              <md-checkbox aria-label="completed Checkboxes" ng-model="todo.completed" ng-change="checkTodo($event, todo)"></md-checkbox>
               <div class="md-list-item-text">
                 <span md-colors="{color:'{|todo.color|}' + '-background-500'}">{|todo.title|}</span>
-                <p>{| todo.description |}</p>
+                <span ng-init="checkDate(todo.due_date)"></span>
+                <br>
+                <div layout="row" layout-padding layout-wrap layout-fill style="padding-bottom: 32px;" ng-cloak>
+                  <md-whiteframe id="todotags" class="md-whiteframe-1dp" ng-repeat="tag in todo.tags" style="background-color:{| todo.color |};">{| tag |} </md-whiteframe>
+                </div>
               </div>
               <md-button class="md-icon-button launch" ng-click="deleteTodo($event, todo)">
                 <i class="material-icons">delete</i>

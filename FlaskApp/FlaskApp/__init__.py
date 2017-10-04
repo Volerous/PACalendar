@@ -125,6 +125,13 @@ def delete_todo():
     Session.commit()
     return jsonify(success=True)
 
+@app.route("/_check_todo", methods=["GET", "POST"])
+def check_todo():
+    post = request.get_json()
+    q = Session.query(Task).filter_by(id=post["id"]).first()
+    q.completed = post["completed"]
+    Session.commit()
+    return jsonify(success=True)
 
 if __name__ == "__main__":
     app.run(debug=True)
