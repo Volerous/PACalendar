@@ -1,0 +1,18 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "taskName": "build",
+    "type": "shell",
+    "tasks": [
+        {
+            "taskName": "build-ts",
+            "command": "tsc /FlaskApp/FlaskApp/static/js/app.ts",
+            "problemMatcher": []
+        },
+        {
+            "taskName": "build-browser",
+            "command": "browserify /FlaskApp/FlaskApp/static/js/app.js -o /FlaskApp/FlaskApp/static/js/main.js"
+        }
+    ]
+}
