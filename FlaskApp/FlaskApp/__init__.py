@@ -58,7 +58,8 @@ def insert_todo():
     post = request.get_json()
     # color = post["colorHex"].replace("#", "")
     # print("due_date" in post)
-    if post["due_date"] != None:
+    print(post["due_date"])
+    if post["due_date"] != "null":
         due_date = dateutil.parser.parse(post["due_date"])
         task_to_insert = Task(
             name=post["title"], color=post["color"], due_date=due_date, completed=False, description=post["description"], priority=post["priority"])
@@ -149,9 +150,16 @@ def edit_todo():
     q[0].completed = post["completed"]
     q[0].description = post["description"]
     q[0].due_date = post["due_date"]
-    q[0].tags = post["tags"]
+    q[0].str_tags = post["tags"]
     Session.commit()
     return jsonify(success=True)
 
+@app.route("/_find_tag/<string:tag_part>", methods=["GET"])
+def find_tag(tag_part):
+    tags = Session.query(Tag).filter(Tag.title.contains(tag_part)).all()
+    ret = []
+    for tag in tags:
+        ret.append({"title": tag.title, "color": tag.color})
+    return jsonify(ret=ret)
 if __name__ == "__main__":
     app.run(debug=True)

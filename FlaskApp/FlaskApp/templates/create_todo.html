@@ -10,7 +10,7 @@
     <div>
       <form name="TodoForm">
         <div layout-gt-xs="row" md-colors="{background: '{|todo.color|}-background-hue-3'}">
-          <md-input-container>
+          <md-input-container flex>
             <label>Title</label>
             <input ng-model="todo.title" required name="title" ng-disabled="disabled">
             <div ng-messages="TodoForm.title.$error">
@@ -22,7 +22,11 @@
         </div>
         <div layout-gt-xs="row">
           <div class="chips-container" flex>
-            <md-chips ng-model="todo.tags">
+            <md-chips ng-model="todo.tags" md-autocomplete-snap md-transform-chip="transformChip($chip)" md-require-match=false>
+              <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)"
+                md-item-text="item" placeholder="Tags" ng-disabled="disabled">
+                <span md-highlight-text="searchText">{|item.title|}</span>
+              </md-autocomplete>
               <input type="text" placeholder="Tags" ng-disabled="disabled">
             </md-chips>
           </div>
@@ -58,7 +62,16 @@
           </md-radio-group>
         </div>
 
-        <md-dialog-actions ng-show="state == 1 || state == 2">
+        <md-dialog-actions ng-show="state == 0">
+          <md-button ng-click="viewBack()">
+            Back
+          </md-button>
+          <span flex></span>
+          <md-button ng-click="edit()">
+            Edit
+          </md-button>
+        </md-dialog-actions>
+        <md-dialog-actions ng-show="state == 1">
           <md-button ng-click="cancel()">
             Cancel
           </md-button>
@@ -67,9 +80,13 @@
             Accept
           </md-button>
         </md-dialog-actions>
-        <md-dialog-actions ng-show="state == 0">
-          <md-button ng-click="edit()">
-            Edit
+        <md-dialog-actions ng-show="state == 2">
+          <md-button ng-click="editCancel()">
+            Cancel
+          </md-button>
+          <span flex></span>
+          <md-button type="submit" ng-click="editDone()">
+            Accept
           </md-button>
         </md-dialog-actions>
       </form>
