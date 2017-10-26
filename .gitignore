@@ -1,2 +1,3 @@
 node_modules/
 fullcalendar-3.4.0/
+*.pyc
