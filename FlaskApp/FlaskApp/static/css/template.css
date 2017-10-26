@@ -5,17 +5,14 @@
     padding-top:10px;
     border-radius: 5px;
     line-height: 10px;
-    height: 10px;
+    height: 12px;
+    width: auto;
     text-align: center;
     vertical-align: middle;
+    zoom: 60%;
 }
-#todotag {
-    padding: 2px 4px;
-    color: #fff;
-    font-weight: 300;
-    font-size: 0.8rem;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
-    background-clip: padding-box;
-  }
+.todo-date-time {
+    color: maroon;
+    text-align: right;
+    flex:1;
+}

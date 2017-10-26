@@ -57,8 +57,10 @@ def show_create_todo():
 def insert_todo():
     post = request.get_json()
     # color = post["colorHex"].replace("#", "")
-    if "dueDateTime" not in post:
-        due_date = dateutil.parser.parse(post["dueDateTime"])
+    # print("due_date" in post)
+    print(post["due_date"])
+    if post["due_date"] != "null":
+        due_date = dateutil.parser.parse(post["due_date"])
         task_to_insert = Task(
             name=post["title"], color=post["color"], due_date=due_date, completed=False, description=post["description"], priority=post["priority"])
     else:
@@ -92,7 +94,10 @@ def find_all_todo():
         item["priority"] = i.priority
         item["color"] = i.color
         item["description"] = i.description
-        item["due_date"] = i.due_date
+        if i.due_date != None:
+            item["due_date"] = i.due_date.isoformat()
+        else:
+            item["due_date"] = i.due_date
         item["tags"] = []
         for j in i.tags:
             item["tags"].append(j.title)
@@ -125,6 +130,7 @@ def delete_todo():
     Session.commit()
     return jsonify(success=True)
 
+
 @app.route("/_check_todo", methods=["GET", "POST"])
 def check_todo():
     post = request.get_json()
@@ -133,5 +139,27 @@ def check_todo():
     Session.commit()
     return jsonify(success=True)
 
+
+@app.route("/_edit_todo", methods=["POST", "GET"])
+def edit_todo():
+    post = request.get_json()
+    q = Session.query(Task).filter_by(id=post["id"]).all()
+    q[0].title = post["title"]
+    q[0].priority = post["priority"]
+    q[0].color = post["color"]
+    q[0].completed = post["completed"]
+    q[0].description = post["description"]
+    q[0].due_date = post["due_date"]
+    q[0].str_tags = post["tags"]
+    Session.commit()
+    return jsonify(success=True)
+
+@app.route("/_find_tag/<string:tag_part>", methods=["GET"])
+def find_tag(tag_part):
+    tags = Session.query(Tag).filter(Tag.title.contains(tag_part)).all()
+    ret = []
+    for tag in tags:
+        ret.append({"title": tag.title, "color": tag.color})
+    return jsonify(ret=ret)
 if __name__ == "__main__":
     app.run(debug=True)

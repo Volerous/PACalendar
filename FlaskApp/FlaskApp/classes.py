@@ -73,7 +73,7 @@ class Task(Base):
     completed = Column(Boolean, nullable=False)
     priority = Column(Integer, nullable=False)
     description = Column(Text)
-    color = Column(String(10))
+    color = Column(String(20))
     tags = relationship("Tag", secondary=Task_has_Tags, backref="task")
 
     def _find_or_create_tag(self, tag):
