@@ -77,10 +77,11 @@ class Task(Base):
     tags = relationship("Tag", secondary=Task_has_Tags, backref="task")
 
     def _find_or_create_tag(self, tag):
-        q = Session.query(Tag).filter_by(title=tag)
+        print(tag["title"])
+        q = Session.query(Tag).filter_by(title=tag["title"])
         t = q.first()
         if not(t):
-            t = Tag(title=tag)
+            t = Tag(title=tag, color=tag["color"])
         return t
 
     def _get_tags(self):

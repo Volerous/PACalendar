@@ -12,6 +12,20 @@ interface Todo {
     description: String;
 }
 var app = angular.module('PA-App', ['ngMaterial', 'ngMessages', 'mdPickers']);
+app.directive('customChip', function () {
+    return {
+        restrict: 'EA',
+        link: function (scope, elem, attrs) {
+            var chipTemplateClass = attrs.class;
+            elem.removeClass(chipTemplateClass);
+            var mdChip = elem.parent().parent();
+            if (scope.$chip.color) {
+                mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
+            }
+            mdChip.addClass(chipTemplateClass);
+        }
+    }
+});
 app.service('$todoservice', function ($http, $mdDialog) {
     var todoList = [];
     this.state;
@@ -132,7 +146,7 @@ app.service("$colorService", function ($mdColorPalette) {
 });
 app.service("$tagService", ["$http", function ($http) {
     this.find_by_part = function (part: String) {
-        return $http.get("/_find_tag/" + part).then(function succ (data) {
+        return $http.get("/_find_tag/" + part).then(function succ(data) {
             return data.data.ret;
         });
     };
@@ -289,7 +303,6 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
 
     $scope.done = function () {
         if ($scope.todo.title !== '') {
-            console.log($scope.todo.due_date);
             $scope.todo.due_date = moment($scope.todo.due_date);
             $scope.todo.id = $todoservice.insertTodo($scope.todo);
             $mdDialog.hide($scope.todo);
@@ -314,6 +327,7 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
     $scope.viewBack = function () {
         $mdDialog.hide($scope.todo);
     }
+
 });
 app.controller("TagCtrl", function ($scope, $http, $colorService) {
     $scope.tag = {

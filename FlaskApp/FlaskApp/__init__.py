@@ -1,10 +1,11 @@
 from flask import Flask
-from flask import render_template, jsonify
+from flask import render_template, jsonify, abort
 from flask import request
 from classes import *
 import gtts
 import datetime
 import dateutil.parser
+from copy import copy
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -100,7 +101,8 @@ def find_all_todo():
             item["due_date"] = i.due_date
         item["tags"] = []
         for j in i.tags:
-            item["tags"].append(j.title)
+            j_dict = {"title": j.title, "color": j.color}
+            item["tags"].append(j_dict)
         json_list.append(item)
     return jsonify(success=True, todos=json_list)
 
@@ -154,6 +156,7 @@ def edit_todo():
     Session.commit()
     return jsonify(success=True)
 
+
 @app.route("/_find_tag/<string:tag_part>", methods=["GET"])
 def find_tag(tag_part):
     tags = Session.query(Tag).filter(Tag.title.contains(tag_part)).all()
@@ -161,5 +164,25 @@ def find_tag(tag_part):
     for tag in tags:
         ret.append({"title": tag.title, "color": tag.color})
     return jsonify(ret=ret)
+
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        print(request.json)
+        return '', 200
+    else:
+        abort(400)
+
+
+@app.route("/_todo_notifications", methods=["GET"])
+def _todo_notifications():
+    q = Session.query(Task).filter(Task.due_date - datetime.datetime.now()
+                                   <= datetime.timedelta(minutes=1)).order_by(Task.name).all()
+    for i in q:
+        print(i.__dict__)
+    return jsonify(ret=q)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

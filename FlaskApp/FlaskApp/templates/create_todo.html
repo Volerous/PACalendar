@@ -24,9 +24,10 @@
           <div class="chips-container" flex>
             <md-chips ng-model="todo.tags" md-autocomplete-snap md-transform-chip="transformChip($chip)" md-require-match=false>
               <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)"
-                md-item-text="item" placeholder="Tags" ng-disabled="disabled">
+                md-item-text="item.title" placeholder="Tags" ng-disabled="disabled">
                 <span md-highlight-text="searchText">{|item.title|}</span>
               </md-autocomplete>
+              <md-chip-template custom-chip>{|$chip.title|}</md-chip-template>
               <input type="text" placeholder="Tags" ng-disabled="disabled">
             </md-chips>
           </div>
