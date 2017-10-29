@@ -3,30 +3,17 @@ from flask import render_template, jsonify
 from flask import request
 from classes import *
 import gtts
+from sqlalchemy import desc
 import datetime
 import dateutil.parser
+from flask_assistant import Assistant, ask, tell, context_manager
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 
 @app.route("/")
 def hello():
-    print("hello")
     return render_template("./template.html")
-
-
-@app.route("/interactive/", methods=["GET", "POST"])
-def background_page():
-    print(request.method)
-    return render_template("interactive.html")
-
-
-@app.route("/background_process", methods=['POST', 'GET'])
-def background_process():
-    first = request.args.get("first_name")
-    last = request.args.get("last_name")
-    print(first, last)
-    return jsonify(first_name=first, last_name=last)
 
 
 @app.route("/_insert_event")
@@ -56,9 +43,6 @@ def show_create_todo():
 @app.route("/_insert_todo", methods=['GET', "POST"])
 def insert_todo():
     post = request.get_json()
-    # color = post["colorHex"].replace("#", "")
-    # print("due_date" in post)
-    print(post["due_date"])
     if post["due_date"] != "null":
         due_date = dateutil.parser.parse(post["due_date"])
         task_to_insert = Task(
@@ -68,7 +52,6 @@ def insert_todo():
             name=post["title"], color=post["color"], completed=False, description=post["description"], priority=post["priority"])
     Session.add(task_to_insert)
     Session.commit()
-    print(task_to_insert.id)
     task_to_insert.str_tags = post["tags"]
     Session.commit()
     return jsonify(success=True, id=task_to_insert.id)
@@ -84,7 +67,7 @@ def test():
 
 @app.route("/_find_all_todo")
 def find_all_todo():
-    q = Session.query(Task).filter_by(completed=False).all()
+    q = Session.query(Task).filter_by(completed=False).order_by(desc(Task.id)).all()
     json_list = []
     for i in q:
         item = {}
@@ -154,6 +137,7 @@ def edit_todo():
     Session.commit()
     return jsonify(success=True)
 
+
 @app.route("/_find_tag/<string:tag_part>", methods=["GET"])
 def find_tag(tag_part):
     tags = Session.query(Tag).filter(Tag.title.contains(tag_part)).all()
@@ -161,5 +145,8 @@ def find_tag(tag_part):
     for tag in tags:
         ret.append({"title": tag.title, "color": tag.color})
     return jsonify(ret=ret)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
