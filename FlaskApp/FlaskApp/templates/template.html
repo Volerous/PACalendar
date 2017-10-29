@@ -56,11 +56,10 @@
             <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="viewTodo($event, todo)" class="md-2-line">
               <md-checkbox aria-label="completed Checkboxes" ng-model="todo.completed" ng-change="checkTodo($event, todo)"></md-checkbox>
               <div class="md-list-item-text">
-
                 <span>{|todo.title|}</span>
                 <span class="todo-date-time">{| checkDate(todo.due_date) |}</span>
                 <div layout="row" layout-padding layout-wrap layout-fill ng-cloak style="padding-left:0px;padding-top:0px;">
-                  <md-whiteframe id="todotags" style="background-color:{| getColor(todo.color + '-background-500') |};" class="md-whiteframe-1dp" ng-repeat="tag in todo.tags">{| tag |} </md-whiteframe>
+                  <md-whiteframe id="todotags" style="background-color:{| getColor(todo.color + '-background-500') |};" class="md-whiteframe-1dp" ng-repeat="tag in todo.tags">{| tag.title |} </md-whiteframe>
                 </div>
               </div>
               <md-button class="md-icon-button launch" ng-click="deleteTodo($event, todo)">

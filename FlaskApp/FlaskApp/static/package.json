@@ -19,6 +19,7 @@
     "angular-material": "^1.1.5",
     "angular-material-calendar": "^0.2.14",
     "angular-material-event-calendar": "^0.1.4",
+    "angular-material-tree": "^0.2.1",
     "angular-messages": "^1.6.6",
     "md-pickers": "^1.1.0"
   },

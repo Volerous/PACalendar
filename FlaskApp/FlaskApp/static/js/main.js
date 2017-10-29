@@ -4,6 +4,20 @@ exports.__esModule = true;
 var angular = require("angular");
 var moment = require("moment");
 var app = angular.module('PA-App', ['ngMaterial', 'ngMessages', 'mdPickers']);
+app.directive('customChip', function () {
+    return {
+        restrict: 'EA',
+        link: function (scope, elem, attrs) {
+            var chipTemplateClass = attrs["class"];
+            elem.removeClass(chipTemplateClass);
+            var mdChip = elem.parent().parent();
+            if (scope.$chip.color) {
+                mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
+            }
+            mdChip.addClass(chipTemplateClass);
+        }
+    };
+});
 app.service('$todoservice', function ($http, $mdDialog) {
     var todoList = [];
     this.state;
@@ -121,7 +135,6 @@ app.service("$colorService", function ($mdColorPalette) {
 });
 app.service("$tagService", ["$http", function ($http) {
         this.find_by_part = function (part) {
-            console.log("running http");
             return $http.get("/_find_tag/" + part).then(function succ(data) {
                 return data.data.ret;
             });
@@ -247,7 +260,6 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
         if (angular.isObject(chip)) {
             return chip;
         }
-        // Otherwise, create a new one
         return { name: chip, type: 'new' };
     };
     $scope.querySearch = function (find) {
