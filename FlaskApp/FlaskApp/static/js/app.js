@@ -2,51 +2,50 @@
 exports.__esModule = true;
 var angular = require("angular");
 var moment = require("moment");
-var app = angular.module('PA-App', ['ngMaterial', 'ngMessages', 'mdPickers']);
-app.directive('customChip', function () {
+var app = angular.module("PA-App", ["ngMaterial", "ngMessages", "mdPickers"]);
+app.directive("customChip", function () {
     return {
-        restrict: 'EA',
+        restrict: "EA",
         link: function (scope, elem, attrs) {
             var chipTemplateClass = attrs["class"];
             elem.removeClass(chipTemplateClass);
             var mdChip = elem.parent().parent();
-            if (scope.$chip.color) {
-                mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
-            }
+            console.log(scope.$chip);
+            //   if (scope.$chip.color) {
+            // mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
+            //   }
             mdChip.addClass(chipTemplateClass);
         }
     };
 });
-app.service('$todoservice', function ($http, $mdDialog) {
+app.service("$todoservice", function ($http, $mdDialog) {
     var todoList = [];
     this.state;
     this.viewElement;
     this.baseTodo = {
-        title: '',
+        title: "",
         due_date: null,
-        color: 'purple',
+        color: "purple",
         completed: false,
         priority: 3,
         tags: [],
-        description: ''
+        description: ""
     };
     this.updateListTodos = function () {
         $http({
             url: "/_find_all_todo",
-            method: 'GET'
-        })
-            .then(function (data) {
+            method: "GET"
+        }).then(function (data) {
             for (var i = 0; i < data.data.todos.length; i++) {
                 todoList.push(data.data.todos[i]);
             }
-            ;
         }, function (data) {
             console.log(data);
         });
     };
     this.checkTodo = function (todo) {
         return $http({
-            url: '/_check_todo',
+            url: "/_check_todo",
             method: "POST",
             data: todo
         });
@@ -54,10 +53,9 @@ app.service('$todoservice', function ($http, $mdDialog) {
     this.deleteTodo = function (ev, id) {
         $http({
             url: "/_delete_todo",
-            method: 'POST',
+            method: "POST",
             data: { id: id }
-        })
-            .then(function (data) {
+        }).then(function (data) {
             console.log(data);
         }, function (data) {
             console.log("error");
@@ -66,17 +64,17 @@ app.service('$todoservice', function ($http, $mdDialog) {
     this.createTodo = function (ev) {
         this.state = 1;
         this.viewElement = {
-            title: '',
+            title: "",
             due_date: null,
-            color: 'purple',
+            color: "purple",
             completed: false,
             priority: 3,
             tags: [],
-            description: ''
+            description: ""
         };
         return $mdDialog.show({
             controller: "EventCtrl",
-            templateUrl: 'create_todo.html',
+            templateUrl: "create_todo.html",
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose: false
@@ -87,7 +85,7 @@ app.service('$todoservice', function ($http, $mdDialog) {
         this.viewElement = todo;
         return $mdDialog.show({
             controller: "EventCtrl",
-            templateUrl: 'create_todo.html',
+            templateUrl: "create_todo.html",
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose: false
@@ -97,11 +95,10 @@ app.service('$todoservice', function ($http, $mdDialog) {
         var retval;
         $http({
             url: "/_insert_todo",
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             data: JSON.stringify(todo)
-        })
-            .then(function (success) {
+        }).then(function (success) {
             retval = success.data.id;
         }, function (data) {
             console.log("error");
@@ -112,12 +109,10 @@ app.service('$todoservice', function ($http, $mdDialog) {
     this.editTodo = function (todo) {
         $http({
             url: "/_edit_todo",
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             data: JSON.stringify(todo)
-        })
-            .then(function (success) {
-        }, function () { });
+        }).then(function (success) { }, function () { });
     };
     this.updateListTodos();
     this.todoList = todoList;
@@ -128,28 +123,33 @@ app.service("$colorService", function ($mdColorPalette) {
         for (var color in $mdColorPalette) {
             this.colors.push(color.replace("-", " "));
         }
-        ;
     };
     this.createColors();
 });
-app.service("$tagService", ["$http", function ($http) {
+app.service("$tagService", [
+    "$http",
+    function ($http) {
         this.find_by_part = function (part) {
             return $http.get("/_find_tag/" + part).then(function succ(data) {
                 return data.data.ret;
             });
         };
-    }]);
-app.config(['$interpolateProvider', function ($interpolateProvider) {
-        $interpolateProvider.startSymbol('{|');
-        $interpolateProvider.endSymbol('|}');
-    }]);
+    }
+]);
+app.config([
+    "$interpolateProvider",
+    function ($interpolateProvider) {
+        $interpolateProvider.startSymbol("{|");
+        $interpolateProvider.endSymbol("|}");
+    }
+]);
 app.config(function ($mdThemingProvider, $mdColorPalette) {
     $mdThemingProvider.alwaysWatchTheme(true);
     angular.forEach(Object.keys($mdColorPalette), function (color) {
         $mdThemingProvider.theme(color.replace("-", " ")).backgroundPalette(color);
     });
 });
-app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors) {
+app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors) {
     $scope.customFullscreen = false;
     $scope.todos = $todoservice.todoList;
     $scope.getColor = function (color) {
@@ -157,24 +157,25 @@ app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice, $mdToast, 
     };
     $scope.deleteTodo = function (ev, todo) {
         // Appending dialog to document.body to cover sidenav in docs app
-        var confirm = $mdDialog.confirm()
-            .title('Delete' + todo.title + '?')
-            .ariaLabel('Delete Task')
+        var confirm = $mdDialog
+            .confirm()
+            .title("Delete" + todo.title + "?")
+            .ariaLabel("Delete Task")
             .targetEvent(ev)
-            .ok('Delete Task')
-            .cancel('Cancel');
+            .ok("Delete Task")
+            .cancel("Cancel");
         $mdDialog.show(confirm).then(function () {
             $todoservice.deleteTodo(ev, todo.id);
             var eleToRemove = $scope.todos.indexOf(todo);
             $scope.showToast("Task Deleted");
             $scope.todos.splice(eleToRemove, 1);
-        }, function () {
-        });
+        }, function () { });
     };
     $scope.showToast = function (info) {
-        $mdToast.show($mdToast.simple()
+        $mdToast.show($mdToast
+            .simple()
             .textContent(info)
-            .position('bottom right')
+            .position("bottom right")
             .hideDelay(3000));
     };
     $scope.checkTodo = function (ev, todo) {
@@ -182,10 +183,20 @@ app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice, $mdToast, 
             var eleToRemove = $scope.todos.indexOf(todo);
             // $scope.todos.splice(eleToRemove, 1);
             $scope.showToast("Task marked as comeplete");
-        }, function () { $scope.showToast("Task not marked as complete"); });
+        }, function () {
+            $scope.showToast("Task not marked as complete");
+        });
     };
     $scope.checkDate = function (date) {
-        var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var weekdays = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ];
         if (date !== null) {
             var numDays = moment(date).diff(moment(), "days") + 1;
             if (numDays === 1) {
@@ -199,15 +210,14 @@ app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice, $mdToast, 
     };
     $scope.viewTodo = function (ev, todo) {
         var index = $scope.todos.indexOf(todo);
-        $todoservice.viewTodo(ev, todo)
-            .then(function (todo) {
+        $todoservice.viewTodo(ev, todo).then(function (todo) {
             $scope.todos[index] = todo;
         }, function () { });
     };
     $scope.createEvent = function (ev) {
         $mdDialog.show({
             controller: "DemoCtrl",
-            templateUrl: 'create_event.html',
+            templateUrl: "create_event.html",
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose: false,
@@ -215,24 +225,24 @@ app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice, $mdToast, 
         });
     };
     $scope.createToDo = function (ev) {
-        $todoservice.createTodo(ev)
-            .then(function (todo) {
+        $todoservice.createTodo(ev).then(function (todo) {
             $scope.todos.push(todo);
         }, function () { });
         $todoservice.viewElement = {
-            title: '',
+            title: "",
             due_date: null,
-            color: 'purple',
+            color: "purple",
             completed: false,
             priority: 3,
             tags: [],
-            description: ''
+            description: ""
         };
     };
     $scope.createTag = function (ev) {
-        $mdDialog.show({
+        $mdDialog
+            .show({
             controller: "TagCtrl",
-            templateUrl: 'create_tag.html',
+            templateUrl: "create_tag.html",
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose: false,
@@ -243,23 +253,23 @@ app.controller('MainCtrl', function ($scope, $mdDialog, $todoservice, $mdToast, 
         }, function () { });
     };
 });
-app.controller('DemoCtrl', function ($scope, $colorService) {
+app.controller("DemoCtrl", function ($scope, $colorService) {
     $scope.user = {
-        title: 'Developer',
-        email: 'ipsum@lorem.com',
-        colorChoice: 'purple',
+        title: "Developer",
+        email: "ipsum@lorem.com",
+        colorChoice: "purple",
         tags: []
     };
     $scope.colors = $colorService.colors;
 });
 app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoservice, $tagService, $http) {
-    $scope.selectedItem = '';
-    $scope.searchText = '';
+    $scope.selectedItem = "";
+    $scope.searchText = "";
     $scope.transformChip = function (chip) {
         if (angular.isObject(chip)) {
             return chip;
         }
-        return { name: chip, type: 'new' };
+        return { name: chip, type: "new" };
     };
     $scope.querySearch = function (find) {
         var retval = find ? $tagService.find_by_part(find) : [];
@@ -272,12 +282,10 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
     else {
         $scope.disabled = true;
     }
-    ;
     $scope.todo = $todoservice.viewElement;
     $scope.colors = $colorService.colors;
     $scope.done = function () {
-        if ($scope.todo.title !== '') {
-            console.log($scope.todo.due_date);
+        if ($scope.todo.title !== "") {
             $scope.todo.due_date = moment($scope.todo.due_date);
             $scope.todo.id = $todoservice.insertTodo($scope.todo);
             $mdDialog.hide($scope.todo);
@@ -304,8 +312,8 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
 });
 app.controller("TagCtrl", function ($scope, $http, $colorService) {
     $scope.tag = {
-        title: '',
-        color: 'purple'
+        title: "",
+        color: "purple"
     };
     $scope.colors = $colorService.colors;
 });
