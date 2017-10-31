@@ -10,10 +10,12 @@ app.directive("customChip", function () {
             var chipTemplateClass = attrs["class"];
             elem.removeClass(chipTemplateClass);
             var mdChip = elem.parent().parent();
-            console.log(scope.$chip);
-            //   if (scope.$chip.color) {
-            // mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
-            //   }
+            if (scope.$chip.color) {
+                mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
+            }
+            // else {
+            // mdChip[0].style.setProperty();
+            // }
             mdChip.addClass(chipTemplateClass);
         }
     };
@@ -149,7 +151,7 @@ app.config(function ($mdThemingProvider, $mdColorPalette) {
         $mdThemingProvider.theme(color.replace("-", " ")).backgroundPalette(color);
     });
 });
-app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors) {
+app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors, $http, $interval) {
     $scope.customFullscreen = false;
     $scope.todos = $todoservice.todoList;
     $scope.getColor = function (color) {
@@ -159,7 +161,7 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
         // Appending dialog to document.body to cover sidenav in docs app
         var confirm = $mdDialog
             .confirm()
-            .title("Delete" + todo.title + "?")
+            .title("Delete " + todo.title + "?")
             .ariaLabel("Delete Task")
             .targetEvent(ev)
             .ok("Delete Task")
@@ -252,6 +254,12 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
             $scope.todos.push(todo_obj);
         }, function () { });
     };
+    $scope.checkNotification = function () {
+        $http.get("/_check_notifications").success(function (data) {
+            $scope.notifications = data.data;
+        });
+    };
+    $interval($scope.checkNotification, 60000);
 });
 app.controller("DemoCtrl", function ($scope, $colorService) {
     $scope.user = {
