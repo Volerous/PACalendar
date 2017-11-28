@@ -342,8 +342,15 @@ app.controller("EventCtrl", function(
     return { name: chip, type: "new" };
   };
   $scope.querySearch = function(find: String) {
-    var retval = find ? $tagService.find_by_part(find) : [];
-    return retval;
+    if (find) {
+      if (find.indexOf("#") !== -1) {
+        return $tagService.find_by_part(find);
+      } else {
+        return [];
+      }
+    } else {
+      return [];
+    }
   };
   $scope.state = $todoservice.state;
   if ($todoservice.state >= 1) {

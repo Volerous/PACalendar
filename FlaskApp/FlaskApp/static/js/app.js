@@ -154,8 +154,10 @@ app.config(function ($mdThemingProvider, $mdColorPalette) {
 app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors, $http, $interval) {
     $scope.customFullscreen = false;
     $scope.todos = $todoservice.todoList;
-    $scope.getColor = function (color) {
-        return $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color));
+    $scope.getColor = function (tag) {
+        if (tag.color === null) {
+            return $mdColorUtil.rgbaToHex($mdColors.getThemeColor(tag.color + "-background-500"));
+        }
     };
     $scope.deleteTodo = function (ev, todo) {
         // Appending dialog to document.body to cover sidenav in docs app
@@ -280,9 +282,23 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
         return { name: chip, type: "new" };
     };
     $scope.querySearch = function (find) {
+<<<<<<< HEAD
         console.log(find);
         var retval = find ? $tagService.find_by_part(find) : [];
         return retval;
+=======
+        if (find) {
+            if (find.indexOf("#") !== -1) {
+                return $tagService.find_by_part(find);
+            }
+            else {
+                return [];
+            }
+        }
+        else {
+            return [];
+        }
+>>>>>>> 44152ffac6e25096a2abbd3585879719c25ebf1d
     };
     $scope.state = $todoservice.state;
     if ($todoservice.state >= 1) {
