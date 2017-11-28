@@ -280,6 +280,7 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
         return { name: chip, type: "new" };
     };
     $scope.querySearch = function (find) {
+        console.log(find);
         var retval = find ? $tagService.find_by_part(find) : [];
         return retval;
     };
