@@ -38,9 +38,6 @@
       <md-button class="md-primary md-raised" ng-click="createTag($event)">
         Create a Tag
       </md-button>
-      <md-button class="md-icon-button launch" ng-click="">
-        <i class="material-icons">record_voice_over</i>
-      </md-button>
 
       <md-card>
         <md-card-title>
@@ -59,7 +56,7 @@
                 <span>{|todo.title|}</span>
                 <span class="todo-date-time">{| checkDate(todo.due_date) |}</span>
                 <div layout="row" layout-padding layout-wrap layout-fill ng-cloak style="padding-left:0px;padding-top:0px;">
-                  <md-whiteframe id="todotags" style="background-color:{| getColor(todo.color + '-background-500') |};" class="md-whiteframe-1dp" ng-repeat="tag in todo.tags">{| tag.title |} </md-whiteframe>
+                  <md-whiteframe id="todotags" style="background-color:{| getColor(tag.color) |};" class="md-whiteframe-1dp" ng-repeat="tag in todo.tags">{| tag.title |} </md-whiteframe>
                 </div>
               </div>
               <md-button class="md-icon-button launch" ng-click="deleteTodo($event, todo)">
