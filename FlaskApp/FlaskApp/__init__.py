@@ -157,7 +157,7 @@ def webhook():
         abort(400)
 
 
-@app.route("/_todo_notifications", methods=["GET"])
+@app.route("/_check_notifications", methods=["GET"])
 def _todo_notifications():
     q = Session.query(Task).filter(Task.due_date - datetime.datetime.now()
                                    <= datetime.timedelta(minutes=1)).order_by(Task.name).all()

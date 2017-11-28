@@ -1,6 +1,8 @@
 import * as angular from "angular";
 import * as moment from "moment";
-
+interface Ichip extends ng.IScope {
+  $chip?: any;
+}
 interface Todo {
   id?: Number;
   title: String;
@@ -15,13 +17,16 @@ var app = angular.module("PA-App", ["ngMaterial", "ngMessages", "mdPickers"]);
 app.directive("customChip", function() {
   return {
     restrict: "EA",
-    link: function(scope, elem, attrs) {
+    link: function(scope: Ichip, elem, attrs) {
       var chipTemplateClass = attrs.class;
       elem.removeClass(chipTemplateClass);
       var mdChip = elem.parent().parent();
       if (scope.$chip.color) {
         mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
-      }
+      } 
+      // else {
+        // mdChip[0].style.setProperty();
+      // }
       mdChip.addClass(chipTemplateClass);
     }
   };
@@ -172,22 +177,20 @@ app.controller("MainCtrl", function(
   $todoservice,
   $mdToast,
   $mdColorUtil,
-  $mdColors
+  $mdColors,
+  $http,
+  $interval
 ) {
   $scope.customFullscreen = false;
   $scope.todos = $todoservice.todoList;
-  $scope.getColor = function(tag) {
-    if (tag.color === null) {
-      return $mdColorUtil.rgbaToHex(
-        $mdColors.getThemeColor(tag.color + "-background-500")
-      );
-    }
+  $scope.getColor = function(color) {
+    return $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color));
   };
   $scope.deleteTodo = function(ev, todo) {
     // Appending dialog to document.body to cover sidenav in docs app
     var confirm = $mdDialog
       .confirm()
-      .title("Delete" + todo.title + "?")
+      .title("Delete " + todo.title + "?")
       .ariaLabel("Delete Task")
       .targetEvent(ev)
       .ok("Delete Task")
@@ -304,6 +307,13 @@ app.controller("MainCtrl", function(
         function() {}
       );
   };
+  $scope.checkNotification = function() {
+    $http.get("/_check_notifications").success(function(data) {
+      $scope.notifications = data.data;
+    });
+  };
+
+  $interval($scope.checkNotification, 60000);
 });
 
 app.controller("DemoCtrl", function($scope, $colorService) {
