@@ -36,7 +36,7 @@ app.service("$todoservice", function ($http, $mdDialog) {
     };
     this.updateListTodos = function () {
         $http({
-            url: "/_find_all_todo",
+            url: "/_todo",
             method: "GET"
         }).then(function (data) {
             for (var i = 0; i < data.data.todos.length; i++) {
@@ -48,16 +48,15 @@ app.service("$todoservice", function ($http, $mdDialog) {
     };
     this.checkTodo = function (todo) {
         return $http({
-            url: "/_check_todo",
-            method: "POST",
+            url: "/_todo",
+            method: "PUT",
             data: todo
         });
     };
     this.deleteTodo = function (ev, id) {
         $http({
-            url: "/_delete_todo",
-            method: "POST",
-            data: { id: id }
+            url: "/_todo/" + id,
+            method: "DELETE"
         }).then(function (data) {
             console.log(data);
         }, function (data) {
@@ -97,7 +96,7 @@ app.service("$todoservice", function ($http, $mdDialog) {
     this.insertTodo = function (todo) {
         var retval;
         $http({
-            url: "/_insert_todo",
+            url: "/_todo",
             method: "POST",
             headers: { "Content-Type": "application/json" },
             data: JSON.stringify(todo)
@@ -111,8 +110,8 @@ app.service("$todoservice", function ($http, $mdDialog) {
     };
     this.editTodo = function (todo) {
         $http({
-            url: "/_edit_todo",
-            method: "POST",
+            url: "/_todo",
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
             data: JSON.stringify(todo)
         }).then(function (success) { }, function () { });
@@ -133,7 +132,7 @@ app.service("$tagService", [
     "$http",
     function ($http) {
         this.find_by_part = function (part) {
-            return $http.get("/_find_tag/" + part).then(function succ(data) {
+            return $http.get("/_tag/" + part).then(function succ(data) {
                 return data.data.ret;
             });
         };
@@ -156,7 +155,12 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
     $scope.customFullscreen = false;
     $scope.todos = $todoservice.todoList;
     $scope.getColor = function (color) {
-        return $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color));
+        if (color !== null) {
+            return color;
+        }
+        else {
+            return $mdColorUtil.rgbaToHex($mdColors.getThemeColor("purple-background-500"));
+        }
     };
     $scope.deleteTodo = function (ev, todo) {
         // Appending dialog to document.body to cover sidenav in docs app
@@ -281,9 +285,17 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
         return { name: chip, type: "new" };
     };
     $scope.querySearch = function (find) {
-        console.log(find);
-        var retval = find ? $tagService.find_by_part(find) : [];
-        return retval;
+        if (find) {
+            if (find.indexOf("#") !== -1) {
+                return $tagService.find_by_part(find);
+            }
+            else {
+                return [];
+            }
+        }
+        else {
+            return [];
+        }
     };
     $scope.state = $todoservice.state;
     if ($todoservice.state >= 1) {

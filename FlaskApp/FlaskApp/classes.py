@@ -48,7 +48,9 @@ class Event(Base):
                         _set_tags,
                         "Property str_tags is a simple wrapper for tags relation")
 
+
 class Tag(Base):
+    attrs = ["title", "color"]
     __tablename__ = "tag"
     id = Column(Integer, primary_key=True, nullable=False)
     title = Column(String(100), nullable=False)
@@ -58,7 +60,7 @@ class Tag(Base):
 class Location(Base):
     __tablename__ = "location"
     id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(String(60), nullable=False)
+    title = Column(String(60), nullable=False)
     address = Column(String(80), nullable=False)
     lat = Column(Float, nullable=False)
     lng = Column(Float, nullable=False)
@@ -66,9 +68,11 @@ class Location(Base):
 
 
 class Task(Base):
+    attrs = ["title", "due_date", "completed",
+             "priority", "description", "color", "tags"]
     __tablename__ = "task"
     id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(String(100), nullable=False)
+    title = Column(String(100), nullable=False)
     due_date = Column(DateTime)
     completed = Column(Boolean, nullable=False)
     priority = Column(Integer, nullable=False)
@@ -77,7 +81,7 @@ class Task(Base):
     tags = relationship("Tag", secondary=Task_has_Tags, backref="task")
 
     def _find_or_create_tag(self, tag):
-        print(tag["title"])
+        # print(tag["title"])
         q = Session.query(Tag).filter_by(title=tag["title"])
         t = q.first()
         if not(t):
@@ -88,16 +92,20 @@ class Task(Base):
         return [x.name for x in self.tags]
 
     def _set_tags(self, value):
+        if not value:
+            return
         # clear the list first
         while self.tags:
             del self.tags[0]
         # add new tags
+        
         for tag in value:
             self.tags.append(self._find_or_create_tag(tag))
 
     str_tags = property(_get_tags,
                         _set_tags,
                         "Property str_tags is a simple wrapper for tags relation")
+
 
 # create the connection and session
 engine = create_engine("mysql://volerous:fourarms@127.0.0.1:3306")

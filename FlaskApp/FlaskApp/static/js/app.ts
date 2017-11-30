@@ -23,9 +23,9 @@ app.directive("customChip", function() {
       var mdChip = elem.parent().parent();
       if (scope.$chip.color) {
         mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
-      } 
+      }
       // else {
-        // mdChip[0].style.setProperty();
+      // mdChip[0].style.setProperty();
       // }
       mdChip.addClass(chipTemplateClass);
     }
@@ -46,7 +46,7 @@ app.service("$todoservice", function($http, $mdDialog) {
   };
   this.updateListTodos = function() {
     $http({
-      url: "/_find_all_todo",
+      url: "/_todo",
       method: "GET"
     }).then(
       function(data) {
@@ -61,16 +61,15 @@ app.service("$todoservice", function($http, $mdDialog) {
   };
   this.checkTodo = function(todo: Todo) {
     return $http({
-      url: "/_check_todo",
-      method: "POST",
+      url: "/_todo",
+      method: "PUT",
       data: todo
     });
   };
   this.deleteTodo = function(ev, id) {
     $http({
-      url: "/_delete_todo",
-      method: "POST",
-      data: { id: id }
+      url: "/_todo/" + id,
+      method: "DELETE"
     }).then(
       function(data) {
         console.log(data);
@@ -113,7 +112,7 @@ app.service("$todoservice", function($http, $mdDialog) {
   this.insertTodo = function(todo: Todo): Number {
     var retval: Number;
     $http({
-      url: "/_insert_todo",
+      url: "/_todo",
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: JSON.stringify(todo)
@@ -130,8 +129,8 @@ app.service("$todoservice", function($http, $mdDialog) {
   };
   this.editTodo = function(todo: Todo) {
     $http({
-      url: "/_edit_todo",
-      method: "POST",
+      url: "/_todo",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       data: JSON.stringify(todo)
     }).then(function(success) {}, function() {});
@@ -152,7 +151,7 @@ app.service("$tagService", [
   "$http",
   function($http) {
     this.find_by_part = function(part: String) {
-      return $http.get("/_find_tag/" + part).then(function succ(data) {
+      return $http.get("/_tag/" + part).then(function succ(data) {
         return data.data.ret;
       });
     };
@@ -184,7 +183,13 @@ app.controller("MainCtrl", function(
   $scope.customFullscreen = false;
   $scope.todos = $todoservice.todoList;
   $scope.getColor = function(color) {
-    return $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color));
+    if (color !== null) {
+      return color;
+    } else {
+      return $mdColorUtil.rgbaToHex(
+        $mdColors.getThemeColor("purple-background-500")
+      );
+    }
   };
   $scope.deleteTodo = function(ev, todo) {
     // Appending dialog to document.body to cover sidenav in docs app

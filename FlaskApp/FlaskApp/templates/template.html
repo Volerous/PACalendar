@@ -50,7 +50,7 @@
         </md-card-title>
         <md-card-content style="height: 600px; overflow-y: auto">
           <md-list class="md-dense" flex>
-            <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="viewTodo($event, todo)" class="md-2-line">
+            <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="viewTodo($event, todo)" oncontextmenu="showrightclick(todo.id)" class="md-2-line">
               <md-checkbox aria-label="completed Checkboxes" ng-model="todo.completed" ng-change="checkTodo($event, todo)"></md-checkbox>
               <div class="md-list-item-text">
                 <span>{|todo.title|}</span>
@@ -68,6 +68,20 @@
             </md-list-item>
           </md-list>
         </md-card-content>
+      </md-card>
+    </div>
+    <div flex-xs flex-gt-xs="25" layout="column">
+      <md-card>
+        <md-card-title>
+          <md-card-title>
+            <div class="md-toolbar-tools">
+              <span flex>To-Do</span>
+              <md-button class="md-icon-button launch" ng-click="createToDo($event)">
+                <i class="material-icons">add</i>
+              </md-button>
+            </div>
+          </md-card-title>
+        </md-card-title>
       </md-card>
     </div>
   </div>
