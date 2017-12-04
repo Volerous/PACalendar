@@ -108,8 +108,8 @@ class Task(Base):
 
 
 # create the connection and session
-engine = create_engine("mysql://volerous:fourarms@127.0.0.1:3306/Personal_Assistant")
-# engine.execute("USE Personal_Assistant")
+engine = create_engine("mysql+mysqldb://volerous:fourarms@localhost/Personal_Assistant")
+#engine.execute("USE Personal_Assistant")
 Base.metadata.create_all(engine)
 session_m = sessionmaker(bind=engine)
 Session = session_m()

@@ -319,6 +319,9 @@ app.controller("MainCtrl", function(
   };
 
   $interval($scope.checkNotification, 60000);
+  $scope.showrightclick = function (id) {
+    
+  }
 });
 
 app.controller("DemoCtrl", function($scope, $colorService) {

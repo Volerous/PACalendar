@@ -265,6 +265,8 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
         });
     };
     $interval($scope.checkNotification, 60000);
+    $scope.showrightclick = function (id) {
+    };
 });
 app.controller("DemoCtrl", function ($scope, $colorService) {
     $scope.user = {
