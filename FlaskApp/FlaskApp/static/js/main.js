@@ -260,7 +260,7 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
         }, function () { });
     };
     $scope.checkNotification = function () {
-        $http.get("/_check_notifications").success(function (data) {
+        $http.get("/_check_notifications").then(function (data) {
             $scope.notifications = data.data;
         });
     };
