@@ -313,12 +313,15 @@ app.controller("MainCtrl", function(
       );
   };
   $scope.checkNotification = function() {
-    $http.get("/_check_notifications").success(function(data) {
+    $http.get("/_check_notifications").then(function(data) {
       $scope.notifications = data.data;
     });
   };
 
   $interval($scope.checkNotification, 60000);
+  $scope.showrightclick = function (id) {
+    
+  }
 });
 
 app.controller("DemoCtrl", function($scope, $colorService) {
