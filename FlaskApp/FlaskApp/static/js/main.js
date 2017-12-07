@@ -132,8 +132,13 @@ app.service("$tagService", [
     "$http",
     function ($http) {
         this.find_by_part = function (part) {
-            return $http.get("/_tag/" + part).then(function succ(data) {
+            return $http({
+                url: "/_tag/" + part,
+                method: "GET"
+            }).then(function succ(data) {
                 return data.data.ret;
+            }, function (data) {
+                console.log(data);
             });
         };
     }
@@ -151,7 +156,7 @@ app.config(function ($mdThemingProvider, $mdColorPalette) {
         $mdThemingProvider.theme(color.replace("-", " ")).backgroundPalette(color);
     });
 });
-app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors, $http, $interval) {
+app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors, $http, $interval, $mdMenu) {
     $scope.customFullscreen = false;
     $scope.todos = $todoservice.todoList;
     $scope.getColor = function (color) {
@@ -204,8 +209,9 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
             "Friday",
             "Saturday"
         ];
-        if (date !== null) {
-            var numDays = moment(date).diff(moment(), "days") + 1;
+        var numDays = moment(date).diff(moment(), "days") + 1;
+        // console.log(numDays);
+        if (date !== null && numDays >= 1) {
             if (numDays === 1) {
                 return "Tomorrow";
             }
@@ -213,6 +219,9 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
                 return weekdays[moment(date).day()];
             }
             return "in " + numDays + " days";
+        }
+        else if (date !== null) {
+            return moment(date).format("D-MM-YY");
         }
     };
     $scope.viewTodo = function (ev, todo) {
@@ -265,8 +274,6 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
         });
     };
     $interval($scope.checkNotification, 60000);
-    $scope.showrightclick = function (id) {
-    };
 });
 app.controller("DemoCtrl", function ($scope, $colorService) {
     $scope.user = {
@@ -281,19 +288,15 @@ app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoser
     $scope.selectedItem = "";
     $scope.searchText = "";
     $scope.transformChip = function (chip) {
+        // $tagService.find_by_part()
         if (angular.isObject(chip)) {
             return chip;
         }
-        return { name: chip, type: "new" };
+        return { title: chip, type: "new" };
     };
     $scope.querySearch = function (find) {
         if (find) {
-            if (find.indexOf("#") !== -1) {
-                return $tagService.find_by_part(find);
-            }
-            else {
-                return [];
-            }
+            return $tagService.find_by_part(find);
         }
         else {
             return [];

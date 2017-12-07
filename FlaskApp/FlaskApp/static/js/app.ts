@@ -151,9 +151,17 @@ app.service("$tagService", [
   "$http",
   function($http) {
     this.find_by_part = function(part: String) {
-      return $http.get("/_tag/" + part).then(function succ(data) {
-        return data.data.ret;
-      });
+      return $http({
+        url: "/_tag/" + part,
+        method: "GET"
+      }).then(
+        function succ(data) {
+          return data.data.ret;
+        },
+        function(data) {
+          console.log(data);
+        }
+      );
     };
   }
 ]);
@@ -178,7 +186,8 @@ app.controller("MainCtrl", function(
   $mdColorUtil,
   $mdColors,
   $http,
-  $interval
+  $interval,
+  $mdMenu
 ) {
   $scope.customFullscreen = false;
   $scope.todos = $todoservice.todoList;
@@ -245,14 +254,17 @@ app.controller("MainCtrl", function(
       "Friday",
       "Saturday"
     ];
-    if (date !== null) {
-      var numDays = moment(date).diff(moment(), "days") + 1;
+    var numDays = moment(date).diff(moment(), "days") + 1;
+    // console.log(numDays);
+    if (date !== null && numDays >= 1) {
       if (numDays === 1) {
         return "Tomorrow";
       } else if (numDays <= 6) {
         return weekdays[moment(date).day()];
       }
       return "in " + numDays + " days";
+    } else if (date !== null) {
+      return moment(date).format("D-MM-YY");
     }
   };
 
@@ -319,9 +331,6 @@ app.controller("MainCtrl", function(
   };
 
   $interval($scope.checkNotification, 60000);
-  $scope.showrightclick = function (id) {
-    
-  }
 });
 
 app.controller("DemoCtrl", function($scope, $colorService) {
@@ -344,18 +353,15 @@ app.controller("EventCtrl", function(
   $scope.selectedItem = "";
   $scope.searchText = "";
   $scope.transformChip = function(chip) {
+    // $tagService.find_by_part()
     if (angular.isObject(chip)) {
       return chip;
     }
-    return { name: chip, type: "new" };
+    return { title: chip, type: "new" };
   };
   $scope.querySearch = function(find: String) {
     if (find) {
-      if (find.indexOf("#") !== -1) {
-        return $tagService.find_by_part(find);
-      } else {
-        return [];
-      }
+      return $tagService.find_by_part(find);
     } else {
       return [];
     }

@@ -195,7 +195,7 @@ def _todo_notifications():
 
 
 rest_api.add_resource(Todo_Resorce, "/_todo", "/_todo/<string:todo_id>")
-rest_api.add_resource(Tag_Resource, "/_tag",
+rest_api.add_resource(Tag_Resource, "/_tag/",
                       "/_tag/<string:tag_part>", "/_tag/<int:tag_id>")
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')

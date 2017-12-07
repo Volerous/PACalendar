@@ -50,7 +50,8 @@
         </md-card-title>
         <md-card-content style="height: 600px; overflow-y: auto">
           <md-list class="md-dense" flex>
-            <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="viewTodo($event, todo)" oncontextmenu="showrightclick(todo.id)" class="md-2-line">
+            <md-list-item ng-repeat="todo in todos" ng-class="md-primary" ng-click="viewTodo($event, todo)" oncontextmenu="showrightclick(todo.id)"
+              class="md-2-line">
               <md-checkbox aria-label="completed Checkboxes" ng-model="todo.completed" ng-change="checkTodo($event, todo)"></md-checkbox>
               <div class="md-list-item-text">
                 <span>{|todo.title|}</span>
@@ -59,12 +60,18 @@
                   <md-whiteframe id="todotags" style="background-color:{| getColor(tag.color) |};" class="md-whiteframe-1dp" ng-repeat="tag in todo.tags">{| tag.title |} </md-whiteframe>
                 </div>
               </div>
-              <md-button class="md-icon-button launch" ng-click="deleteTodo($event, todo)">
-                <i class="material-icons">delete</i>
-              </md-button>
-              <md-button class="md-icon-button launch">
-                <i class="material-icons">more_vert</i>
-              </md-button>
+              <md-menu>
+                <md-button class="md-icon-button launch" ng-click="$mdMenu.open()">
+                  <i class="material-icons">more_vert</i>
+                </md-button>
+                <md-menu-content width="4">
+                  <md-menu-item>
+                    <md-button ng-click="deleteTodo($event, todo)">
+                      Delete
+                    </md-button>
+                  </md-menu-item>
+                </md-menu-content>
+              </md-menu>
             </md-list-item>
           </md-list>
         </md-card-content>
