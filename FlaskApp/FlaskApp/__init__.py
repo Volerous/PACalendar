@@ -121,6 +121,7 @@ class Tag_Resource(Resource):
 
     def post(self):
         post = parser.parse_args()
+        print(post)
         if post["color"] != None:
             tag_to_insert = Tag(title=post["title"], color=post["color"])
         else:
