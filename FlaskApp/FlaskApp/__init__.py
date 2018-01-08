@@ -187,11 +187,16 @@ def webhook():
 
 @app.route("/_check_notifications", methods=["GET"])
 def _todo_notifications():
-    q = Session.query(Task).filter(Task.due_date - datetime.datetime.now()
+   
+    q = Session.query(Task).filter(Task.due_date - datetime.datetime.utcnow()
                                    <= datetime.timedelta(minutes=1)).order_by(Task.title).all()
+    json_lst = []
     for i in q:
-        print(i.__dict__)
-    return jsonify(ret=q)
+        json_obj = {}
+        for j in i.attrs:
+            json_obj[j] = getattr(i,j)
+        json_lst.append(json_obj)
+    return jsonify(ret=json_lst)
 
 
 rest_api.add_resource(Todo_Resorce, "/_todo", "/_todo/<string:todo_id>")
