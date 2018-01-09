@@ -41,16 +41,14 @@
 
       <md-card>
         <md-card-title>
-          <!-- <div class="md-toolbar-tools"> -->
           <span flex>To-Do</span>
-          <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item.title"
+          <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in quickAddSearch(searchText)" md-item-text="item.title"
             placeholder="Tags" ng-disabled="disabled">
             <span md-highlight-text="searchText">{|item.title|}</span>
           </md-autocomplete>
           <md-button class="md-icon-button launch" ng-click="createToDo($event)">
             <i class="material-icons">add</i>
           </md-button>
-          <!-- </div> -->
         </md-card-title>
         <md-card-content style="height: 600px; overflow-y: auto">
           <md-list class="md-dense" flex>

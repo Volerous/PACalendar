@@ -187,7 +187,8 @@ app.controller("MainCtrl", function(
   $mdColors,
   $http,
   $interval,
-  $mdMenu
+  $mdMenu,
+  $tagService
 ) {
   $scope.customFullscreen = false;
   $scope.todos = $todoservice.todoList;
@@ -195,9 +196,7 @@ app.controller("MainCtrl", function(
     if (color !== null) {
       return color;
     } else {
-      return $mdColorUtil.rgbaToHex(
-        $mdColors.getThemeColor("purple-background-500")
-      );
+      return $mdColorUtil.rgbaToHex($mdColors.getThemeColor("purple-background-500"));
     }
   };
   $scope.deleteTodo = function(ev, todo) {
@@ -245,17 +244,8 @@ app.controller("MainCtrl", function(
   };
 
   $scope.checkDate = function(date) {
-    var weekdays = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday"
-    ];
+    var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var numDays = moment(date).diff(moment(), "days") + 1;
-    // console.log(numDays);
     if (date !== null && numDays >= 1) {
       if (numDays === 1) {
         return "Tomorrow";
@@ -331,6 +321,14 @@ app.controller("MainCtrl", function(
   };
 
   $interval($scope.checkNotification, 60000);
+
+  $scope.quickAddSearch = function(text: String) {
+    if (text) {
+      return $tagService.find_by_part(text);
+    } else {
+      return [];
+    }
+  };
 });
 
 app.controller("DemoCtrl", function($scope, $colorService) {
@@ -342,18 +340,10 @@ app.controller("DemoCtrl", function($scope, $colorService) {
   };
   $scope.colors = $colorService.colors;
 });
-app.controller("EventCtrl", function(
-  $scope,
-  $colorService,
-  $mdDialog,
-  $todoservice,
-  $tagService,
-  $http
-) {
+app.controller("EventCtrl", function($scope, $colorService, $mdDialog, $todoservice, $tagService, $http) {
   $scope.selectedItem = "";
   $scope.searchText = "";
   $scope.transformChip = function(chip) {
-    // $tagService.find_by_part()
     if (angular.isObject(chip)) {
       return chip;
     }
