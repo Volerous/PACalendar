@@ -24,9 +24,6 @@ app.directive("customChip", function() {
       if (scope.$chip.color) {
         mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
       }
-      // else {
-      // mdChip[0].style.setProperty();
-      // }
       mdChip.addClass(chipTemplateClass);
     }
   };
@@ -150,18 +147,10 @@ app.service("$colorService", function($mdColorPalette) {
 app.service("$tagService", [
   "$http",
   function($http) {
-    this.find_by_part = function(part: String) {
-      return $http({
-        url: "/_tag/" + part,
-        method: "GET"
-      }).then(
-        function succ(data) {
-          return data.data.ret;
-        },
-        function(data) {
-          console.log(data);
-        }
-      );
+    this.find_by_part = function(part: string) {
+      return $http.get("/_tag/" + part).then(function(data) {
+        return data.data.ret;
+      });
     };
   }
 ]);
@@ -322,9 +311,17 @@ app.controller("MainCtrl", function(
 
   $interval($scope.checkNotification, 60000);
 
-  $scope.quickAddSearch = function(text: String) {
-    if (text) {
-      return $tagService.find_by_part(text);
+  $scope.quickAddSearch = function(find: string) {
+    console.log($scope.selectedItem);
+    if (find) {
+      const regex = /#(\w+)|@(\w+:\w+|\w+)|%([1-5])/gi;
+      var m: string[];
+      m = find.match(regex);
+      console.log(find, m);
+      if (m !== null && m[m.length - 1].indexOf("#") !== -1) {
+        console.log(find);
+        return $tagService.find_by_part(m[m.length - 1].substr(1));
+      }
     } else {
       return [];
     }
