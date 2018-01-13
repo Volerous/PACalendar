@@ -131,13 +131,8 @@ app.service("$tagService", [
     "$http",
     function ($http) {
         this.find_by_part = function (part) {
-            return $http({
-                url: "/_tag/" + part,
-                method: "GET"
-            }).then(function succ(data) {
+            return $http.get("/_tag/" + part).then(function (data) {
                 return data.data.ret;
-            }, function (data) {
-                console.log(data);
             });
         };
     }
@@ -155,7 +150,7 @@ app.config(function ($mdThemingProvider, $mdColorPalette) {
         $mdThemingProvider.theme(color.replace("-", " ")).backgroundPalette(color);
     });
 });
-app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors, $http, $interval, $mdMenu) {
+app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors, $http, $interval, $mdMenu, $tagService) {
     $scope.customFullscreen = false;
     $scope.todos = $todoservice.todoList;
     $scope.getColor = function (color) {
@@ -273,6 +268,22 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
         });
     };
     $interval($scope.checkNotification, 60000);
+    $scope.quickAddText = "";
+    $scope.quickAddSearch = function (find) {
+        if (find) {
+            var regex = /#(\w+)|@(\w+:\w+|\w+)|%([1-5])/gi;
+            var m;
+            m = find.match(regex);
+            console.log(find, m);
+            if (m !== null && m[m.length - 1].includes("#")) {
+                console.log(find);
+                return $tagService.find_by_part(m[m.length - 1].substr(1));
+            }
+        }
+        else {
+            return [];
+        }
+    };
 });
 app.controller("DemoCtrl", function ($scope, $colorService) {
     $scope.user = {
