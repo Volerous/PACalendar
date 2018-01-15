@@ -13,9 +13,6 @@ app.directive("customChip", function () {
             if (scope.$chip.color) {
                 mdChip[0].style.setProperty("background", "#" + scope.$chip.color);
             }
-            // else {
-            // mdChip[0].style.setProperty();
-            // }
             mdChip.addClass(chipTemplateClass);
         }
     };
@@ -260,20 +257,25 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
     };
     $interval($scope.checkNotification, 60000);
     $scope.quickAddSearch = function (find) {
-        console.log($scope.selectedItem);
         if (find) {
             var regex = /#(\w+)|@(\w+:\w+|\w+)|%([1-5])/gi;
             var m;
             m = find.match(regex);
-            console.log(find, m);
             if (m !== null && m[m.length - 1].indexOf("#") !== -1) {
-                console.log(find);
                 return $tagService.find_by_part(m[m.length - 1].substr(1));
             }
         }
         else {
             return [];
         }
+    };
+    $scope.searchTextPH = "";
+    $scope.selChange = function (text) {
+        // $scope.searchText = $scope.searchTextPH + $scope.selectedItem;
+        console.log('selected:', text, 'search:', $scope.searchTextPH);
+    };
+    $scope.seaChange = function (text) {
+        $scope.searchTextPH = text;
     };
 });
 app.controller("DemoCtrl", function ($scope, $colorService) {

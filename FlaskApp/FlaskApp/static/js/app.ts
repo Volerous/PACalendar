@@ -312,20 +312,25 @@ app.controller("MainCtrl", function(
   $interval($scope.checkNotification, 60000);
 
   $scope.quickAddSearch = function(find: string) {
-    console.log($scope.selectedItem);
     if (find) {
       const regex = /#(\w+)|@(\w+:\w+|\w+)|%([1-5])/gi;
       var m: string[];
       m = find.match(regex);
-      console.log(find, m);
       if (m !== null && m[m.length - 1].indexOf("#") !== -1) {
-        console.log(find);
         return $tagService.find_by_part(m[m.length - 1].substr(1));
       }
     } else {
       return [];
     }
   };
+  $scope.searchTextPH = "";
+  $scope.selChange = function (text) {
+    // $scope.searchText = $scope.searchTextPH + $scope.selectedItem;
+    console.log('selected:',text, 'search:', $scope.searchTextPH);
+  };
+  $scope.seaChange = function (text) {
+    $scope.searchTextPH = text;
+  }
 });
 
 app.controller("DemoCtrl", function($scope, $colorService) {
