@@ -1,7 +1,7 @@
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {NgModule} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -35,9 +35,9 @@ import {
   MatTooltipModule,
   MatStepperModule,
 } from '@angular/material';
-import {ListSectionsExample} from './app.component';
-import {HttpModule} from '@angular/http';
-import {CdkTableModule} from '@angular/cdk/table';
+import { TableFilteringExampleComponent } from './app.component';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { CdkTableModule } from '@angular/cdk/table';
 
 @NgModule({
   exports: [
@@ -75,21 +75,21 @@ import {CdkTableModule} from '@angular/cdk/table';
     MatTooltipModule,
   ]
 })
-export class DemoMaterialModule {}
+export class DemoMaterialModule { }
 
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    HttpModule,
+    HttpClientModule,
     DemoMaterialModule,
     MatNativeDateModule,
     ReactiveFormsModule,
   ],
-  entryComponents: [ListSectionsExample],
-  declarations: [ListSectionsExample],
-  bootstrap: [ListSectionsExample],
+  entryComponents: [TableFilteringExampleComponent],
+  declarations: [TableFilteringExampleComponent],
+  bootstrap: [TableFilteringExampleComponent],
   providers: []
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-
-
+import { MatTableDataSource} from '@angular/material';
+import { Element } from '@angular/compiler';
+import { HttpClient } from '@angular/common/http';
 /**
  * @title List with sections
  */
@@ -9,29 +10,27 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.css'],
   templateUrl: 'app.component.html',
 })
-export class ListSectionsExample {
-  folders = [
-    {
-      name: 'Photos',
-      updated: new Date('1/1/16'),
-    },
-    {
-      name: 'Recipes',
-      updated: new Date('1/17/16'),
-    },
-    {
-      name: 'Work',
-      updated: new Date('1/28/16'),
-    }
-  ];
-  notes = [
-    {
-      name: 'Vacation Itinerary',
-      updated: new Date('2/20/16'),
-    },
-    {
-      name: 'Kitchen Remodel',
-      updated: new Date('1/18/16'),
-    }
-  ];
+export class TableFilteringExampleComponent {
+  constructor(private http: HttpClient) { }
+  TaskList: Element[];
+  displayedColumns = ['title', 'name', 'weight', 'symbol'];
+  dataSource = new MatTableDataSource(this.TaskList);
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+  }
+  getFullList(): void {
+    this.http.get('http://localhost:5000/_todo').subscribe(data => {
+      console.log(data);
+      // this.TaskList = data.data.ret;
+    });
+  }
+}
+
+export interface Element {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
 }

@@ -124,16 +124,19 @@ app.service("$colorService", function ($mdColorPalette) {
     };
     this.createColors();
 });
-app.service("$tagService", [
-    "$http",
-    function ($http) {
-        this.find_by_part = function (part) {
-            return $http.get("/_tag/" + part).then(function (data) {
-                return data.data.ret;
-            });
-        };
-    }
-]);
+app.service("$tagService", function ($http) {
+    this.find_by_part = function (part) {
+        return $http.get("/_tag/" + part).then(function (data) {
+            return data.data.ret;
+        });
+    };
+    this.tagsList = [];
+    this.updateTagList = function () {
+        this.tagsList = $http.get("/_tag").then(function (data) {
+            return data.data.ret;
+        });
+    };
+});
 app.config([
     "$interpolateProvider",
     function ($interpolateProvider) {
@@ -150,6 +153,7 @@ app.config(function ($mdThemingProvider, $mdColorPalette) {
 app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, $mdColorUtil, $mdColors, $http, $interval, $mdMenu, $tagService) {
     $scope.customFullscreen = false;
     $scope.todos = $todoservice.todoList;
+    $scope.tags = $tagService.tagList;
     $scope.getColor = function (color) {
         if (color !== null) {
             return color;
@@ -256,13 +260,13 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
         });
     };
     $interval($scope.checkNotification, 60000);
+    $scope.regex = /#(\w+)|@(\w+:\w+|\w+)|%([1-5])/gi;
     $scope.quickAddSearch = function (find) {
         if (find) {
-            var regex = /#(\w+)|@(\w+:\w+|\w+)|%([1-5])/gi;
-            var m;
-            m = find.match(regex);
-            if (m !== null && m[m.length - 1].indexOf("#") !== -1) {
-                return $tagService.find_by_part(m[m.length - 1].substr(1));
+            $scope.m = find.match($scope.regex);
+            console.log($scope.m);
+            if ($scope.m.length > 0 && $scope.m[$scope.m.length - 1].indexOf("#") !== -1) {
+                return $tagService.find_by_part($scope.m[$scope.m.length - 1].substr(1));
             }
         }
         else {
@@ -271,8 +275,10 @@ app.controller("MainCtrl", function ($scope, $mdDialog, $todoservice, $mdToast, 
     };
     $scope.searchTextPH = "";
     $scope.selChange = function (text) {
-        // $scope.searchText = $scope.searchTextPH + $scope.selectedItem;
-        console.log('selected:', text, 'search:', $scope.searchTextPH);
+        console.log($scope.m[$scope.m.length - 1].substr(1).length);
+        $scope.searchTextPH = $scope.searchTextPH.slice(0, -($scope.m[$scope.m.length - 1].substr(1).length));
+        $scope.searchText = $scope.searchTextPH + $scope.selectedItem.title;
+        console.log($scope.searchText);
     };
     $scope.seaChange = function (text) {
         $scope.searchTextPH = text;

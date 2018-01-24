@@ -1,5 +1,6 @@
 import * as angular from "angular";
 import * as moment from "moment";
+import { IHttpPromise } from "angular";
 interface Ichip extends ng.IScope {
   $chip?: any;
 }
@@ -10,14 +11,36 @@ interface Todo {
   color: String;
   completed: Boolean;
   priority: Number;
-  tags: String[];
+  tags: Tag[] | string[];
   description: String;
 }
+interface Tag {
+  id?: Number;
+  title: String;
+  color: String;
+}
+interface Event {
+  id?: Number,
+  title: String,
+  begin_time: Date,
+  end_time: Date,
+  all_day: Boolean;
+  event_color: String,
+  description: String;
+  busy_level: Number;
+  location?: Location;
+  tags: Tag[] | String[];
+  contact?: Contact;
+}
+interface Contact {
+  Name: String;
+  phone_number: String;
+}
 var app = angular.module("PA-App", ["ngMaterial", "ngMessages", "mdPickers"]);
-app.directive("customChip", function() {
+app.directive("customChip", function () {
   return {
     restrict: "EA",
-    link: function(scope: Ichip, elem, attrs) {
+    link: function (scope: Ichip, elem, attrs) {
       var chipTemplateClass = attrs.class;
       elem.removeClass(chipTemplateClass);
       var mdChip = elem.parent().parent();
@@ -28,7 +51,7 @@ app.directive("customChip", function() {
     }
   };
 });
-app.service("$todoservice", function($http, $mdDialog) {
+app.service("$todoservice", function ($http, $mdDialog) {
   var todoList = [];
   this.state;
   this.viewElement;
@@ -41,42 +64,42 @@ app.service("$todoservice", function($http, $mdDialog) {
     tags: [],
     description: ""
   };
-  this.updateListTodos = function() {
+  this.updateListTodos = function () {
     $http({
       url: "/_todo",
       method: "GET"
     }).then(
-      function(data) {
+      function (data) {
         for (var i = 0; i < data.data.todos.length; i++) {
           todoList.push(data.data.todos[i]);
         }
       },
-      function(data) {
+      function (data) {
         console.log(data);
       }
-    );
+      );
   };
-  this.checkTodo = function(todo: Todo) {
+  this.checkTodo = function (todo: Todo) {
     return $http({
       url: "/_todo",
       method: "PUT",
       data: todo
     });
   };
-  this.deleteTodo = function(ev, id) {
+  this.deleteTodo = function (ev, id) {
     $http({
       url: "/_todo/" + id,
       method: "DELETE"
     }).then(
-      function(data) {
+      function (data) {
         console.log(data);
       },
-      function(data) {
+      function (data) {
         console.log("error");
       }
-    );
+      );
   };
-  this.createTodo = function(ev) {
+  this.createTodo = function (ev) {
     this.state = 1;
     this.viewElement = {
       title: "",
@@ -95,7 +118,7 @@ app.service("$todoservice", function($http, $mdDialog) {
       clickOutsideToClose: false
     });
   };
-  this.viewTodo = function(ev, todo: Todo) {
+  this.viewTodo = function (ev, todo: Todo) {
     this.state = <Number>0;
     this.viewElement = todo;
     return $mdDialog.show({
@@ -106,7 +129,7 @@ app.service("$todoservice", function($http, $mdDialog) {
       clickOutsideToClose: false
     });
   };
-  this.insertTodo = function(todo: Todo): Number {
+  this.insertTodo = function (todo: Todo): Number {
     var retval: Number;
     $http({
       url: "/_todo",
@@ -114,60 +137,64 @@ app.service("$todoservice", function($http, $mdDialog) {
       headers: { "Content-Type": "application/json" },
       data: JSON.stringify(todo)
     }).then(
-      function(success) {
+      function (success) {
         retval = success.data.id;
       },
-      function(data) {
+      function (data) {
         console.log("error");
         console.log(data);
       }
-    );
+      );
     return retval;
   };
-  this.editTodo = function(todo: Todo) {
+  this.editTodo = function (todo: Todo) {
     $http({
       url: "/_todo",
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       data: JSON.stringify(todo)
-    }).then(function(success) {}, function() {});
+    }).then(function (success) { }, function () { });
   };
   this.updateListTodos();
   this.todoList = todoList;
 });
-app.service("$colorService", function($mdColorPalette) {
+app.service("$colorService", function ($mdColorPalette) {
   this.colors = [];
-  this.createColors = function() {
+  this.createColors = function () {
     for (var color in $mdColorPalette) {
       this.colors.push(color.replace("-", " "));
     }
   };
   this.createColors();
 });
-app.service("$tagService", [
-  "$http",
-  function($http) {
-    this.find_by_part = function(part: string) {
-      return $http.get("/_tag/" + part).then(function(data) {
+app.service("$tagService",  function ($http) {
+    this.find_by_part = function (part: string) {
+      return $http.get("/_tag/" + part).then(function (data) {
         return data.data.ret;
       });
     };
+    this.tagsList = [];
+    this.updateTagList = function () {
+      this.tagsList = $http.get("/_tag").then(function (data) {
+        return data.data.ret;
+      });
+    }
   }
-]);
+);
 app.config([
   "$interpolateProvider",
-  function($interpolateProvider) {
+  function ($interpolateProvider) {
     $interpolateProvider.startSymbol("{|");
     $interpolateProvider.endSymbol("|}");
   }
 ]);
-app.config(function($mdThemingProvider, $mdColorPalette) {
+app.config(function ($mdThemingProvider, $mdColorPalette) {
   $mdThemingProvider.alwaysWatchTheme(true);
-  angular.forEach(Object.keys($mdColorPalette), function(color) {
+  angular.forEach(Object.keys($mdColorPalette), function (color) {
     $mdThemingProvider.theme(color.replace("-", " ")).backgroundPalette(color);
   });
 });
-app.controller("MainCtrl", function(
+app.controller("MainCtrl", function (
   $scope,
   $mdDialog,
   $todoservice,
@@ -181,14 +208,15 @@ app.controller("MainCtrl", function(
 ) {
   $scope.customFullscreen = false;
   $scope.todos = $todoservice.todoList;
-  $scope.getColor = function(color) {
+  $scope.tags = $tagService.tagList;
+  $scope.getColor = function (color) {
     if (color !== null) {
       return color;
     } else {
       return $mdColorUtil.rgbaToHex($mdColors.getThemeColor("purple-background-500"));
     }
   };
-  $scope.deleteTodo = function(ev, todo) {
+  $scope.deleteTodo = function (ev, todo) {
     // Appending dialog to document.body to cover sidenav in docs app
     var confirm = $mdDialog
       .confirm()
@@ -199,17 +227,17 @@ app.controller("MainCtrl", function(
       .cancel("Cancel");
 
     $mdDialog.show(confirm).then(
-      function() {
+      function () {
         $todoservice.deleteTodo(ev, todo.id);
         var eleToRemove = $scope.todos.indexOf(todo);
         $scope.showToast("Task Deleted");
         $scope.todos.splice(eleToRemove, 1);
       },
-      function() {}
+      function () { }
     );
   };
 
-  $scope.showToast = function(info: String) {
+  $scope.showToast = function (info: String) {
     $mdToast.show(
       $mdToast
         .simple()
@@ -219,20 +247,20 @@ app.controller("MainCtrl", function(
     );
   };
 
-  $scope.checkTodo = function(ev: Event, todo: Todo) {
+  $scope.checkTodo = function (ev: Event, todo: Todo) {
     $todoservice.checkTodo(todo).then(
-      function() {
+      function () {
         var eleToRemove = $scope.todos.indexOf(todo);
         // $scope.todos.splice(eleToRemove, 1);
         $scope.showToast("Task marked as comeplete");
       },
-      function() {
+      function () {
         $scope.showToast("Task not marked as complete");
       }
     );
   };
 
-  $scope.checkDate = function(date) {
+  $scope.checkDate = function (date) {
     var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var numDays = moment(date).diff(moment(), "days") + 1;
     if (date !== null && numDays >= 1) {
@@ -247,17 +275,17 @@ app.controller("MainCtrl", function(
     }
   };
 
-  $scope.viewTodo = function(ev, todo) {
+  $scope.viewTodo = function (ev, todo) {
     var index = $scope.todos.indexOf(todo);
     $todoservice.viewTodo(ev, todo).then(
-      function(todo) {
+      function (todo) {
         $scope.todos[index] = todo;
       },
-      function() {}
+      function () { }
     );
   };
 
-  $scope.createEvent = function(ev) {
+  $scope.createEvent = function (ev) {
     $mdDialog.show({
       controller: "DemoCtrl",
       templateUrl: "create_event.html",
@@ -268,12 +296,12 @@ app.controller("MainCtrl", function(
     });
   };
 
-  $scope.createToDo = function(ev) {
+  $scope.createToDo = function (ev) {
     $todoservice.createTodo(ev).then(
-      function(todo) {
+      function (todo) {
         $scope.todos.push(todo);
       },
-      function() {}
+      function () { }
     );
     $todoservice.viewElement = {
       title: "",
@@ -286,7 +314,7 @@ app.controller("MainCtrl", function(
     };
   };
 
-  $scope.createTag = function(ev) {
+  $scope.createTag = function (ev) {
     $mdDialog
       .show({
         controller: "TagCtrl",
@@ -297,27 +325,26 @@ app.controller("MainCtrl", function(
         fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
       })
       .then(
-        function(todo_obj) {
-          $scope.todos.push(todo_obj);
-        },
-        function() {}
+      function (todo_obj) {
+        $scope.todos.push(todo_obj);
+      },
+      function () { }
       );
   };
-  $scope.checkNotification = function() {
-    $http.get("/_check_notifications").then(function(data) {
+  $scope.checkNotification = function () {
+    $http.get("/_check_notifications").then(function (data) {
       $scope.notifications = data.data;
     });
   };
 
   $interval($scope.checkNotification, 60000);
-
-  $scope.quickAddSearch = function(find: string) {
+  $scope.regex = /#(\w+)|@(\w+:\w+|\w+)|%([1-5])/gi;
+  $scope.quickAddSearch = function (find: string) {
     if (find) {
-      const regex = /#(\w+)|@(\w+:\w+|\w+)|%([1-5])/gi;
-      var m: string[];
-      m = find.match(regex);
-      if (m !== null && m[m.length - 1].indexOf("#") !== -1) {
-        return $tagService.find_by_part(m[m.length - 1].substr(1));
+      $scope.m = find.match($scope.regex);
+      console.log($scope.m);
+      if ($scope.m.length > 0 && $scope.m[$scope.m.length - 1].indexOf("#") !== -1) {
+        return $tagService.find_by_part($scope.m[$scope.m.length - 1].substr(1));
       }
     } else {
       return [];
@@ -325,15 +352,17 @@ app.controller("MainCtrl", function(
   };
   $scope.searchTextPH = "";
   $scope.selChange = function (text) {
-    // $scope.searchText = $scope.searchTextPH + $scope.selectedItem;
-    console.log('selected:',text, 'search:', $scope.searchTextPH);
+    console.log($scope.m[$scope.m.length - 1].substr(1).length);
+    $scope.searchTextPH = $scope.searchTextPH.slice(0, -($scope.m[$scope.m.length - 1].substr(1).length));
+    $scope.searchText = $scope.searchTextPH + $scope.selectedItem.title;
+    console.log($scope.searchText);
   };
   $scope.seaChange = function (text) {
     $scope.searchTextPH = text;
   }
 });
 
-app.controller("DemoCtrl", function($scope, $colorService) {
+app.controller("DemoCtrl", function ($scope, $colorService) {
   $scope.user = {
     title: "Developer",
     email: "ipsum@lorem.com",
@@ -342,16 +371,16 @@ app.controller("DemoCtrl", function($scope, $colorService) {
   };
   $scope.colors = $colorService.colors;
 });
-app.controller("EventCtrl", function($scope, $colorService, $mdDialog, $todoservice, $tagService, $http) {
+app.controller("EventCtrl", function ($scope, $colorService, $mdDialog, $todoservice, $tagService, $http) {
   $scope.selectedItem = "";
   $scope.searchText = "";
-  $scope.transformChip = function(chip) {
+  $scope.transformChip = function (chip) {
     if (angular.isObject(chip)) {
       return chip;
     }
     return { title: chip, type: "new" };
   };
-  $scope.querySearch = function(find: String) {
+  $scope.querySearch = function (find: String) {
     if (find) {
       return $tagService.find_by_part(find);
     } else {
@@ -367,33 +396,33 @@ app.controller("EventCtrl", function($scope, $colorService, $mdDialog, $todoserv
   $scope.todo = $todoservice.viewElement;
   $scope.colors = $colorService.colors;
 
-  $scope.done = function() {
+  $scope.done = function () {
     if ($scope.todo.title !== "") {
       $scope.todo.due_date = moment($scope.todo.due_date);
       $scope.todo.id = $todoservice.insertTodo($scope.todo);
       $mdDialog.hide($scope.todo);
     }
   };
-  $scope.cancel = function() {
+  $scope.cancel = function () {
     $mdDialog.cancel();
   };
-  $scope.edit = function() {
+  $scope.edit = function () {
     $scope.state = 2;
     $scope.disabled = false;
   };
-  $scope.editCancel = function() {
+  $scope.editCancel = function () {
     $scope.todo = $todoservice.viewElement;
     $mdDialog.hide($scope.todo);
   };
-  $scope.editDone = function() {
+  $scope.editDone = function () {
     $todoservice.editTodo($scope.todo);
     $mdDialog.hide($scope.todo);
   };
-  $scope.viewBack = function() {
+  $scope.viewBack = function () {
     $mdDialog.hide($scope.todo);
   };
 });
-app.controller("TagCtrl", function($scope, $http, $colorService) {
+app.controller("TagCtrl", function ($scope, $http, $colorService) {
   $scope.tag = {
     title: "",
     color: "purple"

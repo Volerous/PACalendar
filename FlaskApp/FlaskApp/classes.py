@@ -14,6 +14,8 @@ Task_has_Tags = Table('task_has_tags', Base.metadata,
 
 class Event(Base):
     __tablename__ = "event"
+    attrs = ["title", "id", "begin_date", "end_date", "all_day", "event_color",
+             "description", "busy_level", "contact", "location", "str_tags"]
     id = Column(Integer, primary_key=True, nullable=False)
     title = Column(String(100), nullable=False)
     begin_date = Column(DateTime, nullable=False)
@@ -98,7 +100,7 @@ class Task(Base):
         while self.tags:
             del self.tags[0]
         # add new tags
-        
+
         for tag in value:
             self.tags.append(self._find_or_create_tag(tag))
 
@@ -108,7 +110,8 @@ class Task(Base):
 
 
 # create the connection and session
-engine = create_engine("mysql+mysqldb://volerous:fourarms@localhost/Personal_Assistant")
+engine = create_engine(
+    "mysql+mysqldb://volerous:fourarms@localhost/Personal_Assistant")
 #engine.execute("USE Personal_Assistant")
 Base.metadata.create_all(engine)
 session_m = sessionmaker(bind=engine)

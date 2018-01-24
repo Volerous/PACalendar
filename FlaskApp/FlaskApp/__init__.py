@@ -10,9 +10,11 @@ import dateutil.parser
 from copy import copy
 from flask_restful import Resource, Api, reqparse
 import sys
+from flask_cors import CORS
 app = Flask(__name__)
 app.config.from_object(__name__)
 rest_api = Api(app)
+CORS(app)
 parser = reqparse.RequestParser()
 parser.add_argument("color", type=str)
 parser.add_argument("title", type=str)
@@ -22,11 +24,15 @@ parser.add_argument('due_date', type=str)
 parser.add_argument("completed", type=bool)
 parser.add_argument("priority", type=int)
 parser.add_argument("name", type=str)
+parser.add_argument("begin_date", type=str)
+parser.add_argument("end_date", type=str)
+parser.add_argument("all_day", type=bool)
+parser.add_argument("busy_level", type=int)
+parser.add_argument("event_color", type=str)
 
 
-class Todo_Resorce(Resource):
+class Todo_Resource(Resource):
     def get(self, todo_id=None):
-        print(todo_id)
         if todo_id == None:
             q = Session.query(Task).filter_by(
                 completed=False).order_by(desc(Task.id)).all()
@@ -145,6 +151,51 @@ class Tag_Resource(Resource):
         return {"success": True}
 
 
+class Event_Resource(Resource):
+    def get(self, event_id=None):
+        if id is None:
+            events = Session.query(Event).all()
+        else:
+            events = Session.query(Event).filter_by(id=event_id).all()
+        ret = []
+        for i in events:
+            insert = {}
+            for j in i.attrs:
+                insert[j] = getattr(i, j)
+            ret.append(insert)
+        return {"ret": ret}
+    def post(self):
+        post = parser.parse_args()
+        event_to_insert = Event()
+        now = datetime.datetime.now()
+        now1 = now + datetime.timedelta(hours=1)
+        for i in post.keys():
+            if post[i] != None and i not in ["id"]:
+                setattr(event_to_insert,i,post[i])
+        event_to_insert.begin_date = now
+        event_to_insert.end_date = now1
+        try:
+            Session.add(event_to_insert)
+            Session.commit()
+            return {"success": True}
+        except sqlalchemy.exc.InvalidRequestError:
+            Session.flush()
+            return {"success": False}
+        # except sqlalchemy.exc.
+    def put(self, event_id):
+        post = parser.parse_args()
+        q = Session.query(Event).filter_by(id=event_id).first()
+        for attr in post.keys():
+            if post[attr] != None:
+                setattr(q, attr, post[attr])
+        return {"success": True}
+    def delete(self, event_id):
+        q = Session.query(Event).filter_by(id=event_id).first()
+        Session.delete(q)
+        Session.commit()
+        return {"Succes":True}
+
+
 @app.route("/")
 def hello():
     return render_template("./template.html")
@@ -188,19 +239,20 @@ def webhook():
 
 @app.route("/_check_notifications", methods=["GET"])
 def _todo_notifications():
-   
+
     q = Session.query(Task).filter(Task.due_date - datetime.datetime.utcnow()
                                    <= datetime.timedelta(minutes=1)).order_by(Task.title).all()
     json_lst = []
     for i in q:
         json_obj = {}
         for j in i.attrs:
-            json_obj[j] = getattr(i,j)
+            json_obj[j] = getattr(i, j)
         json_lst.append(json_obj)
     return jsonify(ret=json_lst)
 
 
-rest_api.add_resource(Todo_Resorce, "/_todo", "/_todo/<string:todo_id>")
+rest_api.add_resource(Todo_Resource, "/_todo", "/_todo/<string:todo_id>")
+rest_api.add_resource(Event_Resource, "/_event", "/_event/<int:event_id>")
 rest_api.add_resource(Tag_Resource, "/_tag/",
                       "/_tag/<string:tag_part>", "/_tag/<int:tag_id>")
 if __name__ == "__main__":
