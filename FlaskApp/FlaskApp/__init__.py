@@ -256,4 +256,5 @@ rest_api.add_resource(Event_Resource, "/_event", "/_event/<int:event_id>")
 rest_api.add_resource(Tag_Resource, "/_tag/",
                       "/_tag/<string:tag_part>", "/_tag/<int:tag_id>")
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")

@@ -81,6 +81,7 @@ class Task(Base):
     description = Column(Text)
     color = Column(String(20))
     tags = relationship("Tag", secondary=Task_has_Tags, backref="task")
+    parent_task_list = Column(Integer, ForeignKey("tasklist.id"), nullable=False)
 
     def _find_or_create_tag(self, tag):
         # print(tag["title"])
@@ -107,6 +108,18 @@ class Task(Base):
     str_tags = property(_get_tags,
                         _set_tags,
                         "Property str_tags is a simple wrapper for tags relation")
+
+class SubTask(Base):
+    __tablename__ = "subtask"
+    title = Column(String(100), primary_key=True, nullable=False)
+    parent_task = Column(Integer, ForeignKey("task.id"))
+
+class TaskList(Base):
+    __tablename__ = "tasklist"
+    id = Column(Integer, primary_key=True, nullable=False)
+    title = Column(String(100),nullable=False)
+    repeatable = Column(Boolean)
+
 
 
 # create the connection and session
