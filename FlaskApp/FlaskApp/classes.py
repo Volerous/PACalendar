@@ -82,6 +82,7 @@ class Task(Base):
     color = Column(String(20))
     tags = relationship("Tag", secondary=Task_has_Tags, backref="task")
     parent_task_list = Column(Integer, ForeignKey("tasklist.id"), nullable=False)
+    sub_tasks = relationship("subtask")
 
     def _find_or_create_tag(self, tag):
         # print(tag["title"])
@@ -108,6 +109,26 @@ class Task(Base):
     str_tags = property(_get_tags,
                         _set_tags,
                         "Property str_tags is a simple wrapper for tags relation")
+    # def _get_subtasks(self):
+    #     return Session.query(SubTask).filter_by(parent_task=self.id).all()
+
+    # def _set_subtasks(self, subtasks):
+    #     if not value:
+    #         return
+    #     # clear the list first
+    #     while self.tags:
+    #         del self.tags[0]
+    #     # add new tags
+
+    #     for tag in value:
+    #         self.tags.append(self._find_or_create_tag(tag))
+    # def _find_or_create_subtask(self, tag):
+    #     # print(tag["title"])
+    #     q = Session.query(SubTask).filter_by(title=tag["title"])
+    #     t = q.first()
+    #     if not(t):
+    #         t = Tag(title=tag, color=tag["color"])
+    #     return t
 
 class SubTask(Base):
     __tablename__ = "subtask"
