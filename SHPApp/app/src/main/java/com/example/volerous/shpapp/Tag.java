@@ -22,6 +22,12 @@ public class Tag {
         this.color = color;
     }
     public void insert() {
+
+    }
+    public void delete() {
+
+    }
+    public JSONObject genObject() {
         JSONObject jobj = new JSONObject();
         try {
             jobj.put("title", this.title);
@@ -29,8 +35,6 @@ public class Tag {
         } catch (JSONException e) {
             e.getMessage();
         }
-    }
-    public void delete() {
-
+        return jobj;
     }
 }

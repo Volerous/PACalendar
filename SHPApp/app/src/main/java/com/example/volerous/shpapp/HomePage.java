@@ -18,17 +18,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Cache;
-import com.android.volley.Network;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.BasicNetwork;
-import com.android.volley.toolbox.DiskBasedCache;
-import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +28,7 @@ import java.util.List;
 
 public class HomePage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private List<Task> tasks;
+    private TaskAdapter taskAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,22 +36,13 @@ public class HomePage extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ArrayList<Task> tasks = new ArrayList<Task>();
-        TaskAdapter taskAdapter = new TaskAdapter(this, tasks);
+        this.taskAdapter = new TaskAdapter(this, tasks);
         ListView task_lv = findViewById(R.id.task_list_view);
-        task_lv.setAdapter(taskAdapter);
+        task_lv.setAdapter(this.taskAdapter);
         Task task_to_insert = new Task("test",false,"123456",3,null,null,null);
-        taskAdapter.add(task_to_insert);
+        this.taskAdapter.add(task_to_insert);
+        this.taskAdapter.add(task_to_insert);
         FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                try {
-//                    searchDB();
-//                } catch (JSONException | NullPointerException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -150,18 +130,13 @@ public class HomePage extends AppCompatActivity
                 JSONObject jobj1 = jtags.getJSONObject(j);
                 tags.add(new Tag(jobj1.getString("title"), jobj1.getString("color")));
             }
-            tasks.add(new Task(id, title, completed, color, priority, tags, description, null));
+            Task task = new Task(id, title, completed, color, priority, tags, description, null);
+            this.taskAdapter.add(task);
             tags.clear();
         }
-        this.tasks = tasks;
     }
 
 
-    public void showClick(View view) {
-        Context context = getApplicationContext();
-        CharSequence toast_text = "Item clicked";
-
-    }
 
     public void onItemClick(View view) {
         String selected = ((TextView) view.findViewById(R.id.task_list_view)).getText().toString();

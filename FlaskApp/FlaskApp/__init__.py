@@ -53,6 +53,10 @@ class Todo_Resource(Resource):
                 for j in i.tags:
                     j_dict = {"title": j.title, "color": j.color}
                     item["tags"].append(j_dict)
+                item["subtasks"] = []
+                for j in i.sub_tasks:
+                    j_subtask = {"id": j.id, "title":j.title}
+                    item["subtask"].append(j_subtask)
                 json_list.append(item)
             return {"success": True, "todos": json_list}
         else:
@@ -72,6 +76,10 @@ class Todo_Resource(Resource):
             for j in q.tags:
                 j_dict = {"title": j.title, "color": j.color}
                 item["tags"].append(j_dict)
+            item["subtasks"] = []
+            for j in q.sub_tasks:
+                j_subtask = {"id": j.id, "title":j.title}
+                item["subtask"].append(j_subtask)
             return {"success": True, "todo": item}
 
     def post(self):
@@ -87,6 +95,7 @@ class Todo_Resource(Resource):
             Session.add(task_to_insert)
             Session.commit()
             task_to_insert.str_tags = post["tags"]
+            task_to_insert.str_subtasks = post["subtasks"]
             Session.commit()
         except sqlalchemy.exc.InvalidRequestError:
             Session.rollback()
@@ -194,6 +203,15 @@ class Event_Resource(Resource):
         Session.delete(q)
         Session.commit()
         return {"Succes":True}
+class TaskList(Resource):
+    def get(self, tasklist_id=None):
+        if not id:
+            Session.query(TaskList).all()
+        else:
+            Session.query(Task).filter_by(tasklist_id=tasklist_id).all()
+    def post(self):
+        pass
+
 
 
 @app.route("/")

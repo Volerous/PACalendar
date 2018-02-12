@@ -81,8 +81,8 @@ class Task(Base):
     description = Column(Text)
     color = Column(String(20))
     tags = relationship("Tag", secondary=Task_has_Tags, backref="task")
-    parent_task_list = Column(Integer, ForeignKey("tasklist.id"), nullable=False)
-    sub_tasks = relationship("subtask")
+    tasklist_id = Column(Integer, ForeignKey("tasklist.id"), nullable=False)
+    sub_tasks = relationship("SubTask")
 
     def _find_or_create_tag(self, tag):
         # print(tag["title"])
@@ -109,29 +109,32 @@ class Task(Base):
     str_tags = property(_get_tags,
                         _set_tags,
                         "Property str_tags is a simple wrapper for tags relation")
-    # def _get_subtasks(self):
-    #     return Session.query(SubTask).filter_by(parent_task=self.id).all()
+    def _get_subtasks(self):
+        return self.sub_tasks
 
-    # def _set_subtasks(self, subtasks):
-    #     if not value:
-    #         return
-    #     # clear the list first
-    #     while self.tags:
-    #         del self.tags[0]
-    #     # add new tags
+    def _set_subtasks(self, value):
+        if not value:
+            return
+        # clear the list first
+        self.sub_tasks.clear()
+        # add new tags
+        for subtask in value:
+            self.sub_tasks.append(self._find_or_create_subtask(subtasks))
 
-    #     for tag in value:
-    #         self.tags.append(self._find_or_create_tag(tag))
-    # def _find_or_create_subtask(self, tag):
-    #     # print(tag["title"])
-    #     q = Session.query(SubTask).filter_by(title=tag["title"])
-    #     t = q.first()
-    #     if not(t):
-    #         t = Tag(title=tag, color=tag["color"])
-    #     return t
+    def _find_or_create_subtask(self, subtask):
+        # find first with the title of the subtask
+        t = Session.query(SubTask).filter_by(title=subtask["title"]).first()
+        if not(t):
+            # if it does not exist then insert the new one into the database
+            t = SubTask(title=subtask, parent_task=self.id)
+        # otherwise just return the found value
+        return t
+    # Property Setting for getters and setters
+    str_subtasks = property(_get_subtasks,_set_subtasks)
 
 class SubTask(Base):
     __tablename__ = "subtask"
+    id = Column(Integer, primary_key=True, nullable=False)
     title = Column(String(100), primary_key=True, nullable=False)
     parent_task = Column(Integer, ForeignKey("task.id"))
 
