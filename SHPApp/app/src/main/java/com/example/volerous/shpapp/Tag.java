@@ -1,13 +1,17 @@
 package com.example.volerous.shpapp;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by KGMCD on 1/26/2018.
  */
-
+@Entity
 public class Tag {
+    @PrimaryKey
     public Integer id;
     public String title;
     public String color;
