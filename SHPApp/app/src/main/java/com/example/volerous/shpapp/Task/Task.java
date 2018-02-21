@@ -1,57 +1,66 @@
-package com.example.volerous.shpapp;
+package com.example.volerous.shpapp.Task;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+
+import com.example.volerous.shpapp.SubTask.SubTask;
+import com.example.volerous.shpapp.Tag.Tag;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 
 /**
  * Created by KGMCD on 1/26/2018.
  * Task Class definition
  */
-@Entity(foreignKeys = @ForeignKey(
-        entity = Tag.class,
-        parentColumns = "id",
-        childColumns = "subtasks",
-        onDelete = CASCADE))
+@Entity
 public class Task {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private Integer id;
     private String title;
     private Boolean completed;
     private String color;
     private Integer priority;
-    private List<Tag> tags;
+//    @Ignore
+//    private List<Tag> tags;
     private String description;
     @Ignore
-    private LocalDateTime due_date;
+    private String due_date;
+    @Ignore
     private List<SubTask> subtasks;
 
-    Task(Integer id, String title, Boolean completed, String color, Integer priority,
-         List<Tag> tags, String description, LocalDateTime due_date) {
+    public Task(Integer id, String title, Boolean completed, String color, Integer priority,
+         List<Tag> tags, String description, String due_date) {
         this.id = id;
         this.title = title;
         this.completed = completed;
         this.color = color;
         this.priority = priority;
-        this.tags = tags;
+//        this.tags = tags;
         this.description = description;
         this.due_date = due_date;
     }
 
-    Task(String title, Boolean completed, String color, Integer priority,
-         List<Tag> tags, String description, LocalDateTime due_date) {
+    public Task(String title, Boolean completed, String color, Integer priority,
+                List<Tag> tags, String description, String due_date) {
         this.title = title;
         this.completed = completed;
         this.color = color;
         this.priority = priority;
-        this.tags = tags;
+//        this.tags = tags;
+        this.description = description;
+        this.due_date = due_date;
+    }
+
+    public Task(String title, Boolean completed, String color, Integer priority,
+                String description, String due_date) {
+        this.title = title;
+        this.completed = completed;
+        this.color = color;
+        this.priority = priority;
         this.description = description;
         this.due_date = due_date;
     }
@@ -116,13 +125,13 @@ public class Task {
         this.priority = priority;
     }
 
-    public List<Tag> getTags() {
-        return this.tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
+//    public List<Tag> getTags() {
+//        return this.tags;
+//    }
+//
+//    public void setTags(List<Tag> tags) {
+//        this.tags = tags;
+//    }
 
     public String getDescription() {
         return this.description;

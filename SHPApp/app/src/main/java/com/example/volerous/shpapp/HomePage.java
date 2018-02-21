@@ -1,8 +1,6 @@
 package com.example.volerous.shpapp;
 
-import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -11,17 +9,22 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.volerous.shpapp.SubTask.SubTask;
+import com.example.volerous.shpapp.SubTask.SubTaskDAO;
+import com.example.volerous.shpapp.Task.Task;
+import com.example.volerous.shpapp.Task.TaskDAO;
+import com.example.volerous.shpapp.Task.TaskEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +33,15 @@ import java.util.List;
 public class HomePage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private TaskAdapter taskAdapter;
+    private TaskDAO taskDAO;
+    private SubTaskDAO subTaskDAO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MainDB mainDB = Room.databaseBuilder(getApplicationContext(),MainDB.class, "mainDB").build();
+        MainDB mainDB = Room.databaseBuilder(getApplicationContext(),MainDB.class, "mainDB").allowMainThreadQueries().build();
+        this.taskDAO = mainDB.taskDAO();
+        this.subTaskDAO = mainDB.subTaskDAO();
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -41,10 +49,19 @@ public class HomePage extends AppCompatActivity
         this.taskAdapter = new TaskAdapter(this, tasks);
         ListView task_lv = findViewById(R.id.task_list_view);
         task_lv.setAdapter(this.taskAdapter);
-        Task task_to_insert = new Task("test",false,"123456",3,null,null,null);
-        this.taskAdapter.add(task_to_insert);
-        this.taskAdapter.add(task_to_insert);
+        final Task task_to_insert = new Task("test",false,"123456",3,null,null);
+        this.taskDAO.insertTask(task_to_insert);
+        for (Task task: getAllTasks()){
+            this.taskDAO.deleteTask(task);
+        }
         FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                taskDAO.insertTask(task_to_insert);
+                taskAdapter.add(task_to_insert);
+            }
+        });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -114,34 +131,18 @@ public class HomePage extends AppCompatActivity
 
 
 
-    private void insertTasks(JSONArray jarr) throws JSONException {
-        List<Task> tasks = new ArrayList<>();
-        List<Tag> tags = new ArrayList<>();
-        for (int i = 0; i < jarr.length() - 1; i++) {
-            JSONObject jobj = jarr.getJSONObject(i);
-            Integer id = jobj.getInt("id");
-            String title = jobj.getString("title");
-            Boolean completed = jobj.getBoolean("completed");
-            String color = jobj.getString("color");
-            String description = jobj.getString("description");
-            Integer priority = jobj.getInt("priority");
-//            LocalDateTime due_date = jobj.getString("due_date");
-            JSONArray jtags = jobj.getJSONArray("tags");
-            for (Integer j = 0; j < jtags.length() - 1; j++) {
 
-                JSONObject jobj1 = jtags.getJSONObject(j);
-                tags.add(new Tag(jobj1.getString("title"), jobj1.getString("color")));
-            }
-            Task task = new Task(id, title, completed, color, priority, tags, description, null);
-            this.taskAdapter.add(task);
-            tags.clear();
+
+    public List<Task> getAllTasks(){
+        List<Task> ret = new ArrayList<Task>();
+        List<TaskEntity> tasks = this.taskDAO.getAllTasks();
+        for (TaskEntity task: tasks){
+            List<SubTask> subTasks = this.subTaskDAO.getAllSubtasksForTask(task.task.getId());
+            task.task.setSubtasks(subTasks);
+//            List<Tag> tags = this.taskHasTagsDAO.getTagsForTask(task.task.getId());
+//            task.task.setTags(tags);
+            ret.add(task.task);
         }
-    }
-
-
-
-    public void onItemClick(View view) {
-        String selected = ((TextView) view.findViewById(R.id.task_list_view)).getText().toString();
-        Toast.makeText(getApplicationContext(),selected,Toast.LENGTH_LONG).show();
+        return ret;
     }
 }
